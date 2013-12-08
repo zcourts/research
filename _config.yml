@@ -15,7 +15,15 @@ author :
   email : research@crlog.info
   github : zcourts
   twitter : zcourts
+  googleplus: 117586181712312669408
+  linkedin: zcourts
+  facebook: zcourts
   feedburner : zcourts-research
+
+repo:
+  name: kubo
+  title: Github Project (Kubo)
+  desc: Development currently happens in a private repo but will be made public under a BSD license soon.
 
 # The production_url is only used when full-domain names are needed
 # such as sitemap.txt 
@@ -127,4 +135,3 @@ JB :
   # and include your custom code. Your custom file must be defined at:
   #   ./_includes/custom/[HELPER]
   # where [HELPER] is the name of the helper you are overriding.
-  
