@@ -8,3 +8,4 @@ cabal-dev
 _cache
 *.exe
 .project
+.dist-buildwrapper
