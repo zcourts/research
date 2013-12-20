@@ -58,13 +58,32 @@ It's a bit early to be naming "it", even though I've been building this for abou
 
 # What's it written in?
 
-__Haskell__! At first my only reason for choosing Haskell was because I wanted to learn it. As it turned out, many ideas from the functional programming world are excellent for a database and I'm trying to take advantage of all of them. Saying that, I've also seen the problems Cassandra had in the early days where it was entirely reliant on the JVM for memory management. I wanted a memory managed environment away from the JVM that ideally compiled to C/assembly. [Chris Okasaki's, Purely Functional Data Structures]( /papers/okasaki.pdf ) is one key bit of reading that has helped influnce some of my design choices and solidified Haskell as the right language for the job.
+__Haskell__ (some C and C++ here and there)! At first my only reason for choosing Haskell was because I wanted to learn it. As it turned out, many ideas from the functional programming world are excellent for a database and I'm trying to take advantage of all of them. Saying that, I've also seen the problems Cassandra had in the early days where it was entirely reliant on the JVM for memory management. I wanted a memory managed environment away from the JVM that ideally compiled to C/assembly. [Chris Okasaki's, Purely Functional Data Structures]( /papers/okasaki.pdf ) is one key bit of reading that has helped influnce some of my design choices and solidified Haskell as the right language for the job.
 
 # Is it open source?
 
-It will be! I'm planning to release it under either a 3-clause BSD3 or the Apache v2 license. 
+It will be! I'm planning to release it under either a 3-clause BSD or the Apache v2 license. 
 
 So why haven't I done that yet? A lot of what I've created in the last year (just over a year now I think) or so are pieces of the puzzle. Independent experiments that together will form a complete system, but the glue to get them together as one hasn't been written yet so it's not fully functional as a system. I have experiments in three areas, file systems, query engine and data caching. Effectly all the pieces are there but I won't bring them together until I'm satisfied with the performance/algorithms of each independently.
 
+## Categories
+
+<ul>
+  {% assign categories_list = site.categories %}
+  {% include JB/categories_list %}
+</ul>
+
+## Posts
+<div>
+{% assign posts_collate = site.tags.homepage %}
+{% include JB/posts_collate %}
+</div>
+
+## Tags
+
+<ul>
+  {% assign tags_list = site.tags %}
+  {% include JB/tags_list %}
+</ul>
 
 Built with <a href="http://jekyllbootstrap.com" target="_blank">Jekyll Bootstrap</a> and <a href="http://github.com/dhulihan/hooligan" target="_blank">The Hooligan Theme</a>
