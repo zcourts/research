@@ -55,7 +55,7 @@ Only the current Tesseri has a copy of all edges in the cluster. If the current 
 While a node is the Tesseri it should be configurable that it is not considered a part of the cluster. So it doesn't take part in traversals and focus only on keeping the graph distribution balanced...alternatively it is worth exploring using the Tesseri as the node that performs all traversals...
 
 
-## Slinky Compation for append only file systems
+## Slinky Compaction for append only file systems
 
 Taking ideas from Haskell and Cassandra. Using an append only data structure requires compaction in order to clean up deleted or out of date versions.
 

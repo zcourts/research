@@ -66,6 +66,13 @@ It will be! I'm planning to release it under either a 3-clause BSD or the Apache
 
 So why haven't I done that yet? A lot of what I've created in the last year (just over a year now I think) or so are pieces of the puzzle. Independent experiments that together will form a complete system, but the glue to get them together as one hasn't been written yet so it's not fully functional as a system. I have experiments in three areas, file systems, query engine and data caching. Effectly all the pieces are there but I won't bring them together until I'm satisfied with the performance/algorithms of each independently.
 
+# Pages
+
+<ul>
+  {% assign pages_list = site.pages %}
+  {% include JB/pages_list %}
+</ul>
+
 ## Categories
 
 <ul>
