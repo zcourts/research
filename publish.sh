@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 # get publish message to use
 message=$1
 if [ -z "$1" ] 
@@ -17,15 +17,16 @@ rm -rf /tmp/jsc
 # create /tmp/jsc
 mkdir /tmp/jsc
 #copy _site to /tmp/jsc
-cp -r _site/. /tmp/jsc
+cp -r _site/. /tmp/jsc/
 #checkout gh-pages
 git checkout gh-pages
 current_branch=$(git symbolic-ref --short -q HEAD)
 if [[ "$current_branch" == *gh-pages* ]]
 then
 	#copy /tmp/jsc/* to current dir, replacing existing files
-	cp -rv /tmp/jsc/. ./
-	# commit changes with message from command line
+	cp -rv /tmp/jsc/. .
+	# commit changes with message from command line or last commit msg
+	git add -u
 	git add .
 	git commit -a -m ${message}
 	# push gh-pages branch
