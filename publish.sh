@@ -12,19 +12,18 @@ jekyll build --trace
 git push
 # get branch name into $branch -http://git-blame.blogspot.co.uk/2013/06/checking-current-branch-programatically.html
 branch=$(git symbolic-ref --short -q HEAD)
+tmp_d="/tmp/jsc"
 #remove /tmp/jsc
-rm -rf /tmp/jsc
-# create /tmp/jsc
-mkdir /tmp/jsc
-#copy _site to /tmp/jsc
-cp -r _site/. /tmp/jsc/
+rm -rf ${tmp_d}
+mkdir ${tmp_d}
+cp -r _site/. ${tmp_d}/
 #checkout gh-pages
 git checkout gh-pages
 current_branch=$(git symbolic-ref --short -q HEAD)
 if [[ "$current_branch" == *gh-pages* ]]
 then
 	#copy /tmp/jsc/* to current dir, replacing existing files
-	cp -rv /tmp/jsc/. .
+	cp -rv ${tmp_d}/. ./
 	# commit changes with message from command line or last commit msg
 	git add -u
 	git add .
@@ -39,4 +38,4 @@ else
   echo -e "${red}Failed to checkout gh-pages branch, site not published!${NC}"
 fi
 # remove /tmp/jsc
-rm -rf /tmp/jsc
+#rm -rf /tmp/jsc
