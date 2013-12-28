@@ -11,15 +11,32 @@
 			"file": "passing-thoughts.md",
 			"settings":
 			{
-				"buffer_size": 4915,
+				"buffer_size": 3814,
 				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "query-model.md",
+			"settings":
+			{
+				"buffer_size": 4096,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "file-system-and-io.md",
+			"settings":
+			{
+				"buffer_size": 6997,
+				"line_ending": "Windows",
+				"name": "# Sequential read and write file system"
 			}
 		},
 		{
 			"file": "reading-list.md",
 			"settings":
 			{
-				"buffer_size": 1215,
+				"buffer_size": 3479,
 				"line_ending": "Windows"
 			}
 		},
@@ -104,6 +121,9 @@
 	},
 	"file_history":
 	[
+		"/C/Users/Courtney/Documents/projects/research/generational gc for cache-conscious data placement.pdf",
+		"/C/Users/Courtney/Documents/projects/research/terminology.md",
+		"/C/Users/Courtney/Downloads/com-friendster.all.cmty.txt",
 		"/C/Users/Courtney/Documents/projects/research/404.html",
 		"/C/Users/Courtney/Documents/projects/research/reading-list.md",
 		"/C/Users/Courtney/Documents/projects/research/classification.md",
@@ -188,7 +208,7 @@
 	"groups":
 	[
 		{
-			"selected": 1,
+			"selected": 6,
 			"sheets":
 			[
 				{
@@ -197,15 +217,15 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 4915,
+						"buffer_size": 3814,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								3833,
-								3833
+								3814,
+								3814
 							]
 						],
 						"settings":
@@ -213,26 +233,26 @@
 							"syntax": "Packages/Markdown/Markdown.tmLanguage"
 						},
 						"translation.x": 0.0,
-						"translation.y": 0.0,
+						"translation.y": 1103.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
 				},
 				{
 					"buffer": 1,
-					"file": "reading-list.md",
+					"file": "query-model.md",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 1215,
+						"buffer_size": 4096,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								1215,
-								1215
+								188,
+								0
 							]
 						],
 						"settings":
@@ -247,6 +267,61 @@
 				},
 				{
 					"buffer": 2,
+					"file": "file-system-and-io.md",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 6997,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								2717,
+								2726
+							]
+						],
+						"settings":
+						{
+							"auto_name": "# Sequential read and write file system",
+							"syntax": "Packages/Markdown/Markdown.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 733.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "reading-list.md",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 3479,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								2980,
+								2980
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Markdown/Markdown.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 409.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 4,
 					"file": "README.md",
 					"semi_transient": false,
 					"settings":
@@ -273,7 +348,7 @@
 					"type": "text"
 				},
 				{
-					"buffer": 3,
+					"buffer": 5,
 					"file": "red.md",
 					"semi_transient": false,
 					"settings":
@@ -300,7 +375,7 @@
 					"type": "text"
 				},
 				{
-					"buffer": 4,
+					"buffer": 6,
 					"file": "_config.yml",
 					"semi_transient": false,
 					"settings":
@@ -312,8 +387,8 @@
 						"selection":
 						[
 							[
-								249,
-								249
+								2294,
+								2294
 							]
 						],
 						"settings":
@@ -323,13 +398,13 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 0.0,
+						"translation.y": 770.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
 				},
 				{
-					"buffer": 5,
+					"buffer": 7,
 					"file": "index.md",
 					"semi_transient": false,
 					"settings":
@@ -430,7 +505,7 @@
 	"show_open_files": false,
 	"show_tabs": true,
 	"side_bar_visible": true,
-	"side_bar_width": 205.0,
+	"side_bar_width": 175.0,
 	"status_bar_visible": true,
 	"template_settings":
 	{

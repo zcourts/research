@@ -53,10 +53,3 @@ The Tesseract DB must have no single point of failure. As such the any node in t
 Only the current Tesseri has a copy of all edges in the cluster. If the current Tesseri fails it would have organized the cluster already so the backup Tesseri can aquire a copy of all edges, after a failure occurs. The assumption being that the backup Tesseri would be able aquire a copy of all edges before the graph becomes imbalanced enough to cause severe traversal problems.
 
 While a node is the Tesseri it should be configurable that it is not considered a part of the cluster. So it doesn't take part in traversals and focus only on keeping the graph distribution balanced...alternatively it is worth exploring using the Tesseri as the node that performs all traversals...
-
-
-## Slinky Compaction for append only file systems
-
-Taking ideas from Haskell and Cassandra. Using an append only data structure requires compaction in order to clean up deleted or out of date versions.
-
-Instead of doing a background clean up task which can hog resources. Use two files one is the current file being appended to and the second is the previously written to file. Data from the old file pours over from the old file to the new one while it also accepts new data. The fact that old and new data is interleaved doesn't matter because the file index is also written with this slinky like format. Once old data pours over completely into the new one, the old file is removed and the new one continues to be used until it is determined that the process should start again. This reduces the overhead associated with compactions. I've done the experiment with files up to 150GB and recorded a large improvement. Details and exact numbers will be published when I get the time to write everything up in Jan/Feb 2014. (TODO: Write up a page with the results and prepare a paper for publishing)

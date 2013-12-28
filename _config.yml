@@ -5,6 +5,7 @@ permalink: /:categories/:year/:month/:day/:title
 exclude: [".rvmrc", ".rbenv-version", "README.md", "Rakefile", "changelog.md"]
 pygments: true
 markdown: redcarpet
+encoding: UTF-8
 
 # Themes are encouraged to use these universal variables 
 # so be sure to set them if your theme uses them.
@@ -35,7 +36,14 @@ repo:
 # Finally if you are pushing to a GitHub project page, include the project name at the end.
 #
 production_url : http://research.zcourts.com
-
+gems : [jsc]
+scholar:
+  style: apa
+  locale: en
+  source: bibtex
+  bibliography: references
+  bibliography_template: "%{reference}"
+ #  
 # All Jekyll-Bootstrap specific configurations are namespaced into this hash
 #
 JB :

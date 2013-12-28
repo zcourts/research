@@ -24,6 +24,7 @@ There are cases where terms overlap in definition, where context changes everyth
 11. In-degree of a vertex is the number of edges connecting to it in a directed graph
 12. Out-degree of a vertex is the number of edges leaving a vertex in a directed graph.
 13. Two edges are said to be adjacent if they share a common vertex
+14. Two vertices are said to be adjacent if they are connected by an edge, i.e. the edge e = (a,b) makes the vertices a and b adjacent.
 
 ## Other terms
 
