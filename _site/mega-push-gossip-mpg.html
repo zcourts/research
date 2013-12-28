@@ -1,0 +1,285 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>
+      
+        Mega Push Gossip - MPG - 
+      
+      Research by Courtney Robinson
+    </title>
+    <meta name="description" content="Describes Mega Push Gossip - MPG a push push pull, gossip pprotocol">
+    <meta name="author" content="Courtney Robinson">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- HTML5 shim, for IE6-8 support of HTML elements -->
+    <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+
+    <link href="/assets/themes/hooligan/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/assets/themes/hooligan/bootstrap/css/bootstrap-responsive.min.css" rel="stylesheet">    
+    <link rel="stylesheet" type="text/css" href="/assets/themes/hooligan/css-social-buttons/css/zocial.stripped.css">
+    <link href="/assets/themes/hooligan/css/pygments.css" rel="stylesheet" type="text/css" media="all">
+    <link href="/assets/themes/hooligan/css/darkstrap.css" rel="stylesheet" type="text/css" media="all">    
+    <link href="/assets/themes/hooligan/css/style.css?body=1" rel="stylesheet" type="text/css" media="all">
+
+    
+    <!-- fav and touch icons -->
+  <!-- Update these with your own images
+    <link rel="shortcut icon" href="images/favicon.ico">
+    <link rel="apple-touch-icon" href="images/apple-touch-icon.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="images/apple-touch-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="images/apple-touch-icon-114x114.png">
+  -->
+  </head>
+
+  <body>
+    <div class="navbar">
+      <div class="navbar-inner">
+        <div class="container">
+          <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+          <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </a>      
+
+
+          <a class="brand" href="/">Research by Courtney Robinson</a>
+          <a class="brand" href="http://github.com/zcourts/kubo" title="Development currently happens in a private repo but will be made public under a BSD license soon.">Github Project (Kubo)</a>
+
+          <div class="nav-collapse">
+            <ul class="nav">
+              
+              
+              
+
+
+  
+    
+      
+    
+  
+    
+      
+      	
+      	<li><a href="/archive.html">Archive</a></li>
+      	
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+      	
+      	<li><a href="/categories.html">Categories</a></li>
+      	
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+      	
+      	<li><a href="/pages.html">Pages</a></li>
+      	
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+      	
+      	<li><a href="/tags.html">Tags</a></li>
+      	
+      
+    
+  
+    
+      
+    
+  
+
+
+
+            </ul>
+            <ul class="nav pull-right social visible-desktop">
+              <li class="divider-vertical"></li>
+              
+                <li>
+                  <a href="https://github.com/zcourts" class="zocial github icon" target="_blank">
+                    <span class="hidden-desktop">Github</span>
+                  </a>
+                </li>
+              
+              
+                <li>
+                  <a href="https://plus.google.com/117586181712312669408" class="zocial googleplus icon" target="_blank">
+                    <span class="hidden-desktop">Google+</span>
+                  </a>
+                </li>
+                  
+              
+                <li>
+                  <a href="https://twitter.com/zcourts" class="zocial twitter icon" target="_blank">
+                  <span class="hidden-desktop">Twitter</span>
+                  </a>
+                </li>
+                                        
+              
+                <li>
+                  <a href="http://www.facebook.com/zcourts" class="zocial facebook icon" target="_blank">
+                    <span class="hidden-desktop">Facebook</span>
+                  </a>
+                </li>
+                         
+              
+                <li>
+                  <a href="http://www.linkedin.com/in/zcourts" class="zocial linkedin icon" target="_blank">
+                    <span class="hidden-desktop">LinkedIn</span>
+                  </a>
+                </li>
+                                  
+              
+                <li>
+                  <a href="http://feeds.feedburner.com/zcourts-research" class="zocial rss icon" target="_blank">
+                    <span class="hidden-desktop">FeedBurner</span>
+                  </a>
+                </li>
+              
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+      <div class="content">
+        
+<div class="page-header-wrapper">
+	<div class="page-header">
+  		<h1>Mega Push Gossip - MPG </h1>
+  	</div>
+</div>
+
+<div class="row">
+  <div class="span12">
+    <h1>Mega Push Gossip - MPG</h1>
+
+<p>Mega (as in Megaphone) Push Gossipe, MPG is a gossip algorithm favouring push epidemic but taking advantage of pull where appropriate.</p>
+
+<p>There are lots of gossip algorithms out there. Most of them use a communication model that doesn&#39;t directly send messages to nodes in the cluster, instead, information is disseminated by spreading the message with a sub-set of the nodes that&#39;ll in turn spread the message to another sub-set until all nodes have gotten the message. Often it takes O(log(n)) hops for all nodes to be updated.</p>
+
+<p>While this is perfectly reasonable and appropriate for the scenarios they were designed for, it is somewhat unnecessary in a distributed database scene. Typically a single cluster has machines in the thousands, not hundredsof thousands or millions, as evidenced by the usage of projects like Hadoop, where <a href="http://wiki.apache.org/hadoop/PoweredBy#Y">Yahoo!</a> with the largest known cluster is only at 4500 nodes.</p>
+
+<p>Current distributed databases are not really distributed. While their architecture tends to be designed to scale to millions or billions of nodes in a cluster, other practical limitations (usually network/hardware related) often prevent them getting anywhere near the theoretical limits of the architecture/algorithms.</p>
+
+<h4>Differences and similarities to other gossip algorithms</h4>
+
+<ul>
+<li><p>MPG is a modification and merger of various gossip protocols. In reality Push Push Pull is a somewhat more suitable name because it ends up pushing at least twice as much information as it pulls. </p></li>
+<li><p>The modification in the protocol is the use of O(1) communication for most operations, or all if possible. </p></li>
+<li><p>Where latency or resource constraints demand it, a fanout approach is used to disamminate messages in O(log(n)) hops.</p></li>
+<li><p>In a typical gossip protocol a single node has a partial view of the cluster, MPG changes this so that every node has a complete view, with direct access to routing information of each.</p></li>
+</ul>
+
+<h3>True cost of gossip</h3>
+
+<p>Gossip algorithms are typically described in terms of the number of network hops required to get all nodes up to date. While some mention the total time it takes the focus is often on network hops. With MPG, the cost of gossip has to be calculated differently. MPG assumes TCP over UDP for transmission to help improve delivery reliability. </p>
+
+<h4>Other Gossip protocols</h4>
+
+<p>Firstly, let&#39;s define some terms that may be used to discuss the properties of one gossip protocol.
+Let:</p>
+
+<ol>
+<li><code>b</code> be buffer size of a node, i.e. the number of messages it buffers</li>
+<li><code>t</code> be a limited number of hops or time steps, i.e. how far down the hierarchy a message from a node is disseminated. If it starts at A in a cluster up to F, where does dissemination stop, B,C,D,..?</li>
+<li><code>f</code> be the number of randomly select nodes a message is forwarded to each time, i.e. how many nodes it sends messages to</li>
+<li><code>n</code> be the number of nodes in the cluster.</li>
+<li><strong><code>R</code></strong> be the number of <em>r</em>ounds/hops required for all nodes to be updated</li>
+</ol>
+
+<p><img src="/assets/gossip-b-f-t.png" alt="Diagram of message dissemination from UCL" title="Diagram of message dissemination from UCL"></p>
+
+<p>In other gossip protocols if a cluster has 100 nodes and communication of a message is required. Assuming each node</p>
+
+<h4>Sources</h4>
+
+<ul>
+<li><a href="http://www.info.ucl.ac.be/courses/SINF2345/2010-2011/slides/10-Gossip-lecture-hand.pdf">Université Catholique de louvain, UCL - Gossip lecture</a></li>
+<li><a href="http://web.mit.edu/vdb/www/6.977/l-shah.pdf">Gossip Algorithms, MIT</a></li>
+<li><a href="http://lex104.cs.unibo.it/pub/UBLCS/2004/2004-07.pdf">T-Man: Fast gossip-based construction of large-scale overlay topologies</a></li>
+</ul>
+
+<h2>References</h2>
+
+<ol class="bibliography"></ol>
+
+  </div>
+</div>
+
+
+      </div>
+
+      <footer>
+        <p>&copy; 2013 Courtney Robinson</a> <a href="/terminology.html"> Terminology used</a>
+        </p>
+      </footer>
+    </div> <!-- /container -->
+
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+    <script>window.jQuery || document.write('<script src="/assets/themes/hooligan/js/jquery.min.js"><\/script>')</script>
+    <script src="/assets/themes/hooligan/bootstrap/js/bootstrap.min.js"></script>
+
+    
+  </body>
+</html>
+
