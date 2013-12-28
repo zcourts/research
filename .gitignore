@@ -4,3 +4,4 @@ Thumbs.db
 .rbenv-version
 .rvmrc
 _theme_packages/*
+_site/*
