@@ -225,12 +225,12 @@
 
 <h1>Why</h1>
 
-<p>I&#39;m a big fan of <a href="http://cassandra.apache.org">Cassandra</a>. I&#39;ve been working with it since 2008, not long after it was open sourced by Facebook.</p>
+<p>I&#39;m a big fan of <a href="http://cassandra.apache.org">Cassandra</a> <a href="#cassandra">(Lakshman &#38; Malik, 2010)</a>. I&#39;ve been working with it since 2008, not long after it was open sourced by Facebook.</p>
 
 <p>My fascination with Graphs started when I realized that a lot of the work I did, a lot of what I know other people use Cassandra for could actually be represented and queried more efficiently as Graphs.</p>
 
 <p>I explored existing projects like <a href="http://thinkaurelius.github.io/titan/">Titan</a> and went through related projects in the <a href="http://www.tinkerpop.com/">TinkerPop Stack</a>.
-Twitter&#39;s <a href="https://github.com/twitter/flockdb">FlockDB</a> and others, but they all fall short in one way or another.</p>
+Twitter&#39;s <a href="https://github.com/twitter/flockdb">FlockDB</a>, <a href="http://thegraphsblog.wordpress.com/the-graph-blog/mizan/">Mizan</a> <a href="#mizan">(Khayyat, Awara, Alonazi, Jamjoom, Williams &#38; Kalnis, 2013)</a> and others, but they all fall short in one way or another. Having said that, GraphLab have an excellent technique known as <a href="http://graphlab.org/graphchi/">GraphChi</a> or rather the algorithm is called &quot;Parallel sliding windows&quot; <a href="#graphchi">(Kyrola, Blelloch &#38; Guestrin, 2012)</a> - I&#39;m combining this with my own distributed partition algorithm (paper soon).</p>
 
 <h1>It&#39;s all about speed</h1>
 
@@ -244,7 +244,7 @@ Twitter&#39;s <a href="https://github.com/twitter/flockdb">FlockDB</a> and other
 
 <h1>Amortization... you what now?</h1>
 
-<p><a href="/papers/Amortized%20Computational%20Complexity.pdf">Robert Tarjan&#39;s, Amortized Computational Complexity</a> formally introduced the idea of amortized computational costs. It&#39;s a simple but note worthy idea. My premise is in effect rested on this idea. That is, computational complexity isn&#39;t a simple matter of determining &#39;big O&#39;. A system&#39;s purpose is to perform a given set of tasks, these tasks typically are broken down into smaller tasks. Each requiring a varying amount of computing resources/time. Amortization rests on the idea that some tasks are more &quot;expensive&quot; than others. If there are enough &quot;cheap&quot; tasks, each time they run the acrue &quot;credit&quot; that can eventually be spent performing the more expensive tasks. It follows that, if there are enough cheap tasks to consistently provide enough credit then the effects of performing more expensive tasks can effectively be thought of has being negligable...or there abouts.</p>
+<p><a href="/papers/Amortized%20Computational%20Complexity.pdf">Robert Tarjan&#39;s, Amortized Computational Complexity</a> <a href="#amortization">(Tarjan, 1985)</a> formally introduced the idea of amortized computational costs. It&#39;s a simple but note worthy idea. My premise is in effect rested on this idea. That is, computational complexity isn&#39;t a simple matter of determining &#39;big O&#39;. A system&#39;s purpose is to perform a given set of tasks, these tasks typically are broken down into smaller tasks. Each requiring a varying amount of computing resources/time. Amortization rests on the idea that some tasks are more &quot;expensive&quot; than others. If there are enough &quot;cheap&quot; tasks, each time they run the acrue &quot;credit&quot; that can eventually be spent performing the more expensive tasks. It follows that, if there are enough cheap tasks to consistently provide enough credit then the effects of performing more expensive tasks can effectively be thought of has being negligable...or there abouts.</p>
 
 <p>Naturally I paraphrased that. And that is, at least in my mind a decent interpretation of amortized costs/complexity.</p>
 
@@ -263,7 +263,7 @@ I have a 1st class BEng, Hons Software Engineering degree from Greenwich Univers
 
 <h1>What&#39;s it written in?</h1>
 
-<p><strong>Haskell</strong> (some C and C++ here and there)! At first my only reason for choosing Haskell was because I wanted to learn it. As it turned out, many ideas from the functional programming world are excellent for a database and I&#39;m trying to take advantage of all of them. Saying that, I&#39;ve also seen the problems Cassandra had in the early days where it was entirely reliant on the JVM for memory management. I wanted a memory managed environment away from the JVM that ideally compiled to C/assembly. <a href="/papers/okasaki.pdf">Chris Okasaki&#39;s, Purely Functional Data Structures</a> is one key bit of reading that has helped influnce some of my design choices and solidified Haskell as the right language for the job.</p>
+<p><strong>Haskell</strong> (some C and C++ here and there)! At first my only reason for choosing Haskell was because I wanted to learn it. As it turned out, many ideas from the functional programming world are excellent for a database and I&#39;m trying to take advantage of all of them. Saying that, I&#39;ve also seen the problems Cassandra had in the early days where it was entirely reliant on the JVM for memory management. I wanted a memory managed environment away from the JVM that ideally compiled to C/assembly. <a href="/papers/okasaki.pdf">Chris Okasaki&#39;s, Purely Functional Data Structures</a> <a href="#okasaki">(Okasaki, 1999)</a> is one key bit of reading that has helped influnce some of my design choices and solidified Haskell as the right language for the job.</p>
 
 <h1>Is it open source?</h1>
 
@@ -468,6 +468,14 @@ I have a 1st class BEng, Hons Software Engineering degree from Greenwich Univers
 
 
 </ul>
+
+<h2>References</h2>
+
+<ol class="bibliography"><li><span id="cassandra">Lakshman, A., &#38; Malik, P. (2010). Cassandra: a decentralized structured storage system. <i>ACM SIGOPS Operating Systems Review</i>, <i>44</i>(2), 35–40.</span></li>
+<li><span id="mizan">Khayyat, Z., Awara, K., Alonazi, A., Jamjoom, H., Williams, D., &#38; Kalnis, P. (2013). Mizan: a system for dynamic load balancing in large-scale graph processing. In <i>Proceedings of the 8th ACM European Conference on Computer Systems</i> (169–182).</span></li>
+<li><span id="graphchi">Kyrola, A., Blelloch, G., &#38; Guestrin, C. (2012). GraphChi: Large-scale graph computation on just a PC. In <i>Proceedings of the 10th USENIX Symposium on Operating Systems Design and Implementation (OSDI)</i> (31–46).</span></li>
+<li><span id="amortization">Tarjan, R. E. (1985). Amortized computational complexity. <i>SIAM Journal on Algebraic Discrete Methods</i>, <i>6</i>(2), 306–318.</span></li>
+<li><span id="okasaki">Okasaki, C. (1999). <i>Purely functional data structures</i>. Cambridge University Press.</span></li></ol>
 
 <p>Built with <a href="http://jekyllbootstrap.com" target="_blank">Jekyll Bootstrap</a> and <a href="http://github.com/dhulihan/hooligan" target="_blank">The Hooligan Theme</a></p>
 
