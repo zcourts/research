@@ -24,5 +24,16 @@ title : RSS Feed
         </item>
 {% endfor %}
 
+
+{% for page in site.pages %}
+        <item>
+                <title>{{ page.title }}</title>
+                <description>{{ page.content | xml_escape }}</description>
+                <link>{{ site.production_url }}{{ page.url }}</link>
+                <guid>{{ site.production_url }}{{ page.id }}</guid>
+                <pubDate>{{ page.date}}</pubDate>
+        </item>
+{% endfor %}
+
 </channel>
 </rss>

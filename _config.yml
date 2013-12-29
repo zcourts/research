@@ -23,8 +23,8 @@ author :
   feedburner : zcourts-research
 
 repo:
-  name: kubo
-  title: Github Project (Kubo)
+  name: Tesseract
+  title: Github Project (Tesseract)
   desc: Development currently happens in a private repo but will be made public under a BSD license soon.
 
 # The production_url is only used when full-domain names are needed

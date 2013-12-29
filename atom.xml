@@ -24,5 +24,15 @@ title : Atom Feed
    <content type="html">{{ post.content | xml_escape }}</content>
  </entry>
  {% endfor %}
+
+ {% for page in site.pages %}
+ <entry>
+   <title>{{ page.title }}</title>
+   <link href="{{ site.production_url }}{{ page.url }}"/>
+   <updated>{{ page.date }}</updated>
+   <id>{{ site.production_url }}{{ page.id }}</id>
+   <content type="html">{{ page.content | xml_escape }}</content>
+ </entry>
+ {% endfor %}
  
 </feed>
