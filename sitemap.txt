@@ -17,3 +17,5 @@ http://research.zcourts.com/rss.xml
 http://research.zcourts.com/sitemap.txt
 http://research.zcourts.com/tags.html
 http://research.zcourts.com/terminology.html
+http://research.zcourts.com/tgq.html
+http://research.zcourts.com/vertex-drift.html

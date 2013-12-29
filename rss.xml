@@ -5,8 +5,8 @@
         <description>Research by Courtney Robinson - Courtney Robinson</description>
         <link>http://research.zcourts.com</link>
         <link>http://research.zcourts.com</link>
-        <lastBuildDate>2013-12-29T14:51:33+00:00</lastBuildDate>
-        <pubDate>2013-12-29T14:51:33+00:00</pubDate>
+        <lastBuildDate>2013-12-29T21:42:47+00:00</lastBuildDate>
+        <pubDate>2013-12-29T21:42:47+00:00</pubDate>
         <ttl>1800</ttl>
 
 
@@ -90,7 +90,7 @@ Check out the other crap I've been doing for my research though...I'm sure there
  &lt;title&gt;Research by Courtney Robinson&lt;/title&gt;
  &lt;link href=&quot;http://research.zcourts.com/&quot; rel=&quot;self&quot;/&gt;
  &lt;link href=&quot;http://research.zcourts.com&quot;/&gt;
- &lt;updated&gt;2013-12-29T14:51:33+00:00&lt;/updated&gt;
+ &lt;updated&gt;2013-12-29T21:42:47+00:00&lt;/updated&gt;
  &lt;id&gt;http://research.zcourts.com&lt;/id&gt;
  &lt;author&gt;
    &lt;name&gt;Courtney Robinson&lt;/name&gt;
@@ -900,6 +900,56 @@ There are cases where terms overlap in definition, where context changes everyth
 1. Node - A node is&lt;/content&gt;
  &lt;/entry&gt;
  
+ &lt;entry&gt;
+   &lt;title&gt;Tesseract Graph Query language, TGQ&lt;/title&gt;
+   &lt;link href=&quot;http://research.zcourts.com/tgq.html&quot;/&gt;
+   &lt;updated&gt;&lt;/updated&gt;
+   &lt;id&gt;http://research.zcourts.com&lt;/id&gt;
+   &lt;content type=&quot;html&quot;&gt;{% include JB/setup %}
+
+# Abstract - Introduction
+
+The Tesseract Graph Query Language (TGQ) is inspired by SQL{% cite coddsql %}, not in syntax but by purpose. SQL allows querying, creating, updating and deleting (CRUD) of data in a relational database {% cite coddrelational %}. TGQ serves the same purpose. While it is written for The Tesseract's [query model](/query-model.html) in particular, it is general enough to apply to other graph storage systems.
+
+## References
+
+{% bibliography -c %}&lt;/content&gt;
+ &lt;/entry&gt;
+ 
+ &lt;entry&gt;
+   &lt;title&gt;Vertex Drift&lt;/title&gt;
+   &lt;link href=&quot;http://research.zcourts.com/vertex-drift.html&quot;/&gt;
+   &lt;updated&gt;&lt;/updated&gt;
+   &lt;id&gt;http://research.zcourts.com&lt;/id&gt;
+   &lt;content type=&quot;html&quot;&gt;{% include JB/setup %}
+
+# Abstract - Introduction
+
+Here I propose &amp;quot;Vertex Drift&amp;quot; a dynamic partitioning algorithm suited to the [query model](/query-model.html) being used in the Tesseract. Most current dynamic graph partition algorithms are focused on inter processor communication and data migration, i.e. on a single node. {% cite walshaw1997parallel %} for example introduces the relative gain optimization technique. This and other algorithms require some amount of data migration or are iterative techniques. Vertex drift requires neither iteration or data migration and instead of working with multiple processors it is focused on working with multiple machines. It borrows ideas from Dynamo's virtual nodes {% cite dynamo %} to create a technique where by a vertex or some of it's data splits, and pieces &amp;quot;drift&amp;quot; around the cluster. The Tesseract query model where &amp;quot;markers&amp;quot; and path prediction are used, means that when a vertex is drifted around the cluster we know a lot about a vertex in advance. Using the vertex drift algorithm, only {%m%}O(2n){%em%} messages are required for a traversal (in the worse case) which involves the vertex, where  {%m%}n{%em%} is the number of nodes in the cluster. Only  {%m%}O(n){%em%} messages are required in the best case.
+
+# Background - Why is this needed?
+
+Every day graphs as they occur in the real world can be very disproportionate. This makes it tricky to create an algorithm that will automatically partition data in a reasonable way that ensures minimum network communication during traversals.
+
+As an example, consider the social graph for some Twitter users with 40+ million followers, while the average number of followers for a twitter user is only about 200. The following images represent the number of followers, those they follow and Tweets from Justin Bieber, Kety Perry, Lady Gaga and myself.
+
+![Number of Justin Bieber followers](/assets/bieber-graph.png &amp;quot;Number of Justin Bieber followers&amp;quot;)
+![Number of Katy Perry followers](/assets/perry-graph.png &amp;quot;Number of Kety Perry followers&amp;quot;)
+![Number of Lady Gaga followers](/assets/gaga-graph.png &amp;quot;Number of Lady Gaga followers&amp;quot;)
+![Number of Courtney Robinson's followers](/assets/zcourts-graph.png &amp;quot;Number of Courtney Robinson's followers&amp;quot;)
+
+These images form a clear demonstration of how ill proportioned a real world graph can be. The question now becomes, how can the relationship of each of these disproportionate vertices be stored such that, traversal is evenly spread across the cluster. One answer is vertex drift, by splitting up the number of in and out edges across multiple machines with this technique a traversal involving this vertex can run against in or outbound edges in parallel across the entire cluster.
+
+# Edge partitioning
+
+Based on the concepts in [virtual nodes](http://www.datastax.com/dev/blog/virtual-nodes-in-cassandra-1-2) from Dynamo and implemented in Cassandra. While the application is different it is a similar concept with optimizations for graphs.
+
+
+## References
+
+{% bibliography -c %}&lt;/content&gt;
+ &lt;/entry&gt;
+ 
  
 &lt;/feed&gt;</description>
                 <link>http://research.zcourts.com/atom.xml</link>
@@ -914,7 +964,12 @@ There are cases where terms overlap in definition, where context changes everyth
 &lt;li&gt;&lt;span id=&quot;cassandra&quot;&gt;Lakshman, A., &amp;#38; Malik, P. (2010). Cassandra: a decentralized structured storage system. &lt;i&gt;ACM SIGOPS Operating Systems Review&lt;/i&gt;, &lt;i&gt;44&lt;/i&gt;(2), 35–40.&lt;/span&gt;&lt;/li&gt;
 &lt;li&gt;&lt;span id=&quot;mizan&quot;&gt;Khayyat, Z., Awara, K., Alonazi, A., Jamjoom, H., Williams, D., &amp;#38; Kalnis, P. (2013). Mizan: a system for dynamic load balancing in large-scale graph processing. In &lt;i&gt;Proceedings of the 8th ACM European Conference on Computer Systems&lt;/i&gt; (169–182).&lt;/span&gt;&lt;/li&gt;
 &lt;li&gt;&lt;span id=&quot;amortization&quot;&gt;Tarjan, R. E. (1985). Amortized computational complexity. &lt;i&gt;SIAM Journal on Algebraic Discrete Methods&lt;/i&gt;, &lt;i&gt;6&lt;/i&gt;(2), 306–318.&lt;/span&gt;&lt;/li&gt;
-&lt;li&gt;&lt;span id=&quot;okasaki&quot;&gt;Okasaki, C. (1999). &lt;i&gt;Purely functional data structures&lt;/i&gt;. Cambridge University Press.&lt;/span&gt;&lt;/li&gt;&lt;/ol&gt;
+&lt;li&gt;&lt;span id=&quot;okasaki&quot;&gt;Okasaki, C. (1999). &lt;i&gt;Purely functional data structures&lt;/i&gt;. Cambridge University Press.&lt;/span&gt;&lt;/li&gt;
+&lt;li&gt;&lt;span id=&quot;shafaat2007handling&quot;&gt;Shafaat, T. M., Ghodsi, A., &amp;#38; Haridi, S. (2007). Handling network partitions and mergers in structured overlay networks. In &lt;i&gt;Peer-to-Peer Computing, 2007. P2P 2007. Seventh IEEE International Conference on&lt;/i&gt; (132–139).&lt;/span&gt;&lt;/li&gt;
+&lt;li&gt;&lt;span id=&quot;walshaw1997parallel&quot;&gt;Walshaw, C., Cross, M., &amp;#38; Everett, Mg. (1997). Parallel dynamic graph partitioning for adaptive unstructured meshes. &lt;i&gt;Journal of Parallel and Distributed Computing&lt;/i&gt;, &lt;i&gt;47&lt;/i&gt;(2), 102–108.&lt;/span&gt;&lt;/li&gt;
+&lt;li&gt;&lt;span id=&quot;dynamo&quot;&gt;DeCandia, G., Hastorun, D., Jampani, M., Kakulapati, G., Lakshman, A., Pilchin, A., Sivasubramanian, S., Vosshall, P., &amp;#38; Vogels, W. (2007). Dynamo: amazon’s highly available key-value store. In &lt;i&gt;SOSP&lt;/i&gt; (Vol. 7, 205–220).&lt;/span&gt;&lt;/li&gt;
+&lt;li&gt;&lt;span id=&quot;coddrelational&quot;&gt;Codd, E. F. (1982). Relational database: a practical foundation for productivity. &lt;i&gt;Communications of the ACM&lt;/i&gt;, &lt;i&gt;25&lt;/i&gt;(2), 109–117.&lt;/span&gt;&lt;/li&gt;
+&lt;li&gt;&lt;span id=&quot;coddsql&quot;&gt;Codd, E. F. (1972). &lt;i&gt;Relational completeness of data base sublanguages&lt;/i&gt;. IBM Corporation.&lt;/span&gt;&lt;/li&gt;&lt;/ol&gt;
 </description>
                 <link>http://research.zcourts.com/bibliography.html</link>
                 <guid>http://research.zcourts.com</guid>
@@ -1245,6 +1300,22 @@ I have a 1st class BEng, Hons Software Engineering degree from Greenwich Univers
       
     
   
+    
+      
+        
+        &lt;li&gt;&lt;a href=&quot;/tgq.html&quot;&gt;Tesseract Graph Query language, TGQ&lt;/a&gt;&lt;/li&gt;
+        
+      
+    
+  
+    
+      
+        
+        &lt;li&gt;&lt;a href=&quot;/vertex-drift.html&quot;&gt;Vertex Drift&lt;/a&gt;&lt;/li&gt;
+        
+      
+    
+  
 
 
 
@@ -1542,6 +1613,22 @@ Let:&lt;/p&gt;
       
       	
       	&lt;li&gt;&lt;a href=&quot;/terminology.html&quot;&gt;Terminology&lt;/a&gt;&lt;/li&gt;
+      	
+      
+    
+  
+    
+      
+      	
+      	&lt;li&gt;&lt;a href=&quot;/tgq.html&quot;&gt;Tesseract Graph Query language, TGQ&lt;/a&gt;&lt;/li&gt;
+      	
+      
+    
+  
+    
+      
+      	
+      	&lt;li&gt;&lt;a href=&quot;/vertex-drift.html&quot;&gt;Vertex Drift&lt;/a&gt;&lt;/li&gt;
       	
       
     
@@ -1919,6 +2006,56 @@ There are cases where terms overlap in definition, where context changes everyth
 
 1. Node - A node is</description>
                 <link>http://research.zcourts.com/terminology.html</link>
+                <guid>http://research.zcourts.com</guid>
+                <pubDate></pubDate>
+        </item>
+
+        <item>
+                <title>Tesseract Graph Query language, TGQ</title>
+                <description>{% include JB/setup %}
+
+# Abstract - Introduction
+
+The Tesseract Graph Query Language (TGQ) is inspired by SQL{% cite coddsql %}, not in syntax but by purpose. SQL allows querying, creating, updating and deleting (CRUD) of data in a relational database {% cite coddrelational %}. TGQ serves the same purpose. While it is written for The Tesseract's [query model](/query-model.html) in particular, it is general enough to apply to other graph storage systems.
+
+## References
+
+{% bibliography -c %}</description>
+                <link>http://research.zcourts.com/tgq.html</link>
+                <guid>http://research.zcourts.com</guid>
+                <pubDate></pubDate>
+        </item>
+
+        <item>
+                <title>Vertex Drift</title>
+                <description>{% include JB/setup %}
+
+# Abstract - Introduction
+
+Here I propose &quot;Vertex Drift&quot; a dynamic partitioning algorithm suited to the [query model](/query-model.html) being used in the Tesseract. Most current dynamic graph partition algorithms are focused on inter processor communication and data migration, i.e. on a single node. {% cite walshaw1997parallel %} for example introduces the relative gain optimization technique. This and other algorithms require some amount of data migration or are iterative techniques. Vertex drift requires neither iteration or data migration and instead of working with multiple processors it is focused on working with multiple machines. It borrows ideas from Dynamo's virtual nodes {% cite dynamo %} to create a technique where by a vertex or some of it's data splits, and pieces &quot;drift&quot; around the cluster. The Tesseract query model where &quot;markers&quot; and path prediction are used, means that when a vertex is drifted around the cluster we know a lot about a vertex in advance. Using the vertex drift algorithm, only {%m%}O(2n){%em%} messages are required for a traversal (in the worse case) which involves the vertex, where  {%m%}n{%em%} is the number of nodes in the cluster. Only  {%m%}O(n){%em%} messages are required in the best case.
+
+# Background - Why is this needed?
+
+Every day graphs as they occur in the real world can be very disproportionate. This makes it tricky to create an algorithm that will automatically partition data in a reasonable way that ensures minimum network communication during traversals.
+
+As an example, consider the social graph for some Twitter users with 40+ million followers, while the average number of followers for a twitter user is only about 200. The following images represent the number of followers, those they follow and Tweets from Justin Bieber, Kety Perry, Lady Gaga and myself.
+
+![Number of Justin Bieber followers](/assets/bieber-graph.png &quot;Number of Justin Bieber followers&quot;)
+![Number of Katy Perry followers](/assets/perry-graph.png &quot;Number of Kety Perry followers&quot;)
+![Number of Lady Gaga followers](/assets/gaga-graph.png &quot;Number of Lady Gaga followers&quot;)
+![Number of Courtney Robinson's followers](/assets/zcourts-graph.png &quot;Number of Courtney Robinson's followers&quot;)
+
+These images form a clear demonstration of how ill proportioned a real world graph can be. The question now becomes, how can the relationship of each of these disproportionate vertices be stored such that, traversal is evenly spread across the cluster. One answer is vertex drift, by splitting up the number of in and out edges across multiple machines with this technique a traversal involving this vertex can run against in or outbound edges in parallel across the entire cluster.
+
+# Edge partitioning
+
+Based on the concepts in [virtual nodes](http://www.datastax.com/dev/blog/virtual-nodes-in-cassandra-1-2) from Dynamo and implemented in Cassandra. While the application is different it is a similar concept with optimizations for graphs.
+
+
+## References
+
+{% bibliography -c %}</description>
+                <link>http://research.zcourts.com/vertex-drift.html</link>
                 <guid>http://research.zcourts.com</guid>
                 <pubDate></pubDate>
         </item>
