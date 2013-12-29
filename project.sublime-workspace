@@ -3,72 +3,19 @@
 	{
 		"selected_items":
 		[
+			[
+				"cur",
+				"current_branch"
+			]
 		]
 	},
 	"buffers":
 	[
 		{
-			"file": "passing-thoughts.md",
+			"contents": "",
 			"settings":
 			{
-				"buffer_size": 3814,
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "query-model.md",
-			"settings":
-			{
-				"buffer_size": 4096,
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "file-system-and-io.md",
-			"settings":
-			{
-				"buffer_size": 6997,
-				"line_ending": "Windows",
-				"name": "# Sequential read and write file system"
-			}
-		},
-		{
-			"file": "reading-list.md",
-			"settings":
-			{
-				"buffer_size": 3479,
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "README.md",
-			"settings":
-			{
-				"buffer_size": 267,
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "red.md",
-			"settings":
-			{
-				"buffer_size": 3271,
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "_config.yml",
-			"settings":
-			{
-				"buffer_size": 4631,
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "index.md",
-			"settings":
-			{
-				"buffer_size": 6935,
+				"buffer_size": 0,
 				"line_ending": "Windows"
 			}
 		}
@@ -121,11 +68,28 @@
 	},
 	"file_history":
 	[
+		"/C/Users/Courtney/Documents/projects/research/publish.sh",
+		"/C/Users/Courtney/Documents/projects/research/passing-thoughts.md",
+		"/C/Users/Courtney/Documents/projects/research/.nojekyll",
+		"/C/Users/Courtney/Documents/projects/research/.gitignore",
+		"/C/Users/Courtney/Documents/projects/research/file-system-and-io.md",
+		"/C/Users/Courtney/Documents/projects/research/bibtex/references.bib",
+		"/C/Users/Courtney/Documents/projects/research/_config.yml",
+		"/C/Users/Courtney/Documents/projects/research/jsc.md",
+		"/C/Users/Courtney/Documents/projects/research/_theme_packages/hooligan/README.md",
+		"/C/Users/Courtney/Documents/projects/research/mega-push-gossip-mpg.md",
+		"/C/Users/Courtney/Documents/projects/research/bibliography.md",
+		"/C/Users/Courtney/Documents/projects/research/_layouts/bibtex.html",
+		"/C/Users/Courtney/Documents/projects/research/_plugins/jsc-plugin.rb",
+		"/C/Users/Courtney/Documents/projects/research/query-model.md",
+		"/C/Users/Courtney/Documents/projects/research/index.md",
+		"/C/Users/Courtney/Documents/projects/research/red.md",
+		"/C/Users/Courtney/Documents/projects/research/README.md",
+		"/C/Users/Courtney/Documents/projects/research/reading-list.md",
 		"/C/Users/Courtney/Documents/projects/research/generational gc for cache-conscious data placement.pdf",
 		"/C/Users/Courtney/Documents/projects/research/terminology.md",
 		"/C/Users/Courtney/Downloads/com-friendster.all.cmty.txt",
 		"/C/Users/Courtney/Documents/projects/research/404.html",
-		"/C/Users/Courtney/Documents/projects/research/reading-list.md",
 		"/C/Users/Courtney/Documents/projects/research/classification.md",
 		"/C/Users/Courtney/Documents/projects/research/look-ahead-graph-traversals.md",
 		"/C/Users/Courtney/Downloads/protein.sequences.v9.05.fa",
@@ -148,7 +112,6 @@
 		"/C/Users/Courtney/Documents/projects/research/tail.exe.stackdump",
 		"/C/Users/Courtney/Documents/projects/research/_includes/themes/hooligan/default.html",
 		"/C/Users/Courtney/Documents/projects/research/changelog.md",
-		"/C/Users/Courtney/Documents/projects/research/_config.yml",
 		"/C/Users/Courtney/Documents/projects/research/_theme_packages/hooligan/_includes/themes/hooligan/default.html",
 		"/C/Users/Courtney/Documents/projects/research/atom.xml",
 		"/C/Users/Courtney/Documents/projects/research/archive.html",
@@ -175,6 +138,9 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"oldbranch",
+			"Xcite",
+			"gem",
 			"</pre>",
 			"<pre>",
 			"]",
@@ -191,6 +157,8 @@
 		"regex": false,
 		"replace_history":
 		[
+			"branch",
+			"cite",
 			"{% endhighlight %}",
 			"{% highlight bash %}",
 			"\\]",
@@ -208,226 +176,35 @@
 	"groups":
 	[
 		{
-			"selected": 6,
+			"selected": 0,
 			"sheets":
 			[
 				{
 					"buffer": 0,
-					"file": "passing-thoughts.md",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 3814,
+						"buffer_size": 0,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								3814,
-								3814
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Markdown/Markdown.tmLanguage"
-						},
-						"translation.x": 0.0,
-						"translation.y": 1103.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 1,
-					"file": "query-model.md",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 4096,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								188,
+								0,
 								0
 							]
 						],
 						"settings":
 						{
-							"syntax": "Packages/Markdown/Markdown.tmLanguage"
+							"auto_name": "",
+							"syntax": "Packages/Text/Plain text.tmLanguage"
 						},
 						"translation.x": 0.0,
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"type": "text"
-				},
-				{
-					"buffer": 2,
-					"file": "file-system-and-io.md",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 6997,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								2717,
-								2726
-							]
-						],
-						"settings":
-						{
-							"auto_name": "# Sequential read and write file system",
-							"syntax": "Packages/Markdown/Markdown.tmLanguage"
-						},
-						"translation.x": 0.0,
-						"translation.y": 733.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 3,
-					"file": "reading-list.md",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 3479,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								2980,
-								2980
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Markdown/Markdown.tmLanguage"
-						},
-						"translation.x": 0.0,
-						"translation.y": 409.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 4,
-					"file": "README.md",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 267,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								266,
-								266
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Markdown/Markdown.tmLanguage"
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 5,
-					"file": "red.md",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 3271,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								79,
-								79
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Markdown/Markdown.tmLanguage"
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 6,
-					"file": "_config.yml",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 4631,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								2294,
-								2294
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/YAML/YAML.tmLanguage",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 770.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 7,
-					"file": "index.md",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 6935,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								6935,
-								6935
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Markdown/Markdown.tmLanguage"
-						},
-						"translation.x": 0.0,
-						"translation.y": 1802.0,
-						"zoom_level": 1.0
-					},
+					"stack_index": 0,
 					"type": "text"
 				}
 			]
@@ -465,6 +242,14 @@
 	},
 	"menu_visible": true,
 	"output.exec":
+	{
+		"height": 100.0
+	},
+	"output.find_results":
+	{
+		"height": 0.0
+	},
+	"output.haskell_sublime_load":
 	{
 		"height": 100.0
 	},

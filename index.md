@@ -20,12 +20,12 @@ __No this isn't another "Big Data" blah blah.__ Recent strides in data warehousi
 
 # Why
 
-I'm a big fan of [Cassandra](http://cassandra.apache.org). I've been working with it since 2008, not long after it was open sourced by Facebook.
+I'm a big fan of [Cassandra](http://cassandra.apache.org) {% cite cassandra %}. I've been working with it since 2008, not long after it was open sourced by Facebook.
 
 My fascination with Graphs started when I realized that a lot of the work I did, a lot of what I know other people use Cassandra for could actually be represented and queried more efficiently as Graphs.
 
 I explored existing projects like [Titan](http://thinkaurelius.github.io/titan/) and went through related projects in the [TinkerPop Stack](http://www.tinkerpop.com/).
-Twitter's [FlockDB](https://github.com/twitter/flockdb) and others, but they all fall short in one way or another.
+Twitter's [FlockDB](https://github.com/twitter/flockdb), [Mizan](http://thegraphsblog.wordpress.com/the-graph-blog/mizan/) {% cite mizan %} and others, but they all fall short in one way or another. Having said that, GraphLab have an excellent technique known as [GraphChi](http://graphlab.org/graphchi/) or rather the algorithm is called "Parallel sliding windows" {% cite graphchi %} - I'm combining this with my own distributed partition algorithm (paper soon).
 
 # It's all about speed
 
@@ -39,7 +39,7 @@ The cost of accessing vertices across servers (nodes) depends mainly on the spee
 
 # Amortization... you what now?
 
-[Robert Tarjan's, Amortized Computational Complexity]( /papers/Amortized%20Computational%20Complexity.pdf ) formally introduced the idea of amortized computational costs. It's a simple but note worthy idea. My premise is in effect rested on this idea. That is, computational complexity isn't a simple matter of determining 'big O'. A system's purpose is to perform a given set of tasks, these tasks typically are broken down into smaller tasks. Each requiring a varying amount of computing resources/time. Amortization rests on the idea that some tasks are more "expensive" than others. If there are enough "cheap" tasks, each time they run the acrue "credit" that can eventually be spent performing the more expensive tasks. It follows that, if there are enough cheap tasks to consistently provide enough credit then the effects of performing more expensive tasks can effectively be thought of has being negligable...or there abouts.
+[Robert Tarjan's, Amortized Computational Complexity]( /papers/Amortized%20Computational%20Complexity.pdf ) {% cite amortization %} formally introduced the idea of amortized computational costs. It's a simple but note worthy idea. My premise is in effect rested on this idea. That is, computational complexity isn't a simple matter of determining 'big O'. A system's purpose is to perform a given set of tasks, these tasks typically are broken down into smaller tasks. Each requiring a varying amount of computing resources/time. Amortization rests on the idea that some tasks are more "expensive" than others. If there are enough "cheap" tasks, each time they run the acrue "credit" that can eventually be spent performing the more expensive tasks. It follows that, if there are enough cheap tasks to consistently provide enough credit then the effects of performing more expensive tasks can effectively be thought of has being negligable...or there abouts.
 
 Naturally I paraphrased that. And that is, at least in my mind a decent interpretation of amortized costs/complexity.
 
@@ -58,7 +58,7 @@ It's a bit early to be naming "it", even though I've been building this for abou
 
 # What's it written in?
 
-__Haskell__ (some C and C++ here and there)! At first my only reason for choosing Haskell was because I wanted to learn it. As it turned out, many ideas from the functional programming world are excellent for a database and I'm trying to take advantage of all of them. Saying that, I've also seen the problems Cassandra had in the early days where it was entirely reliant on the JVM for memory management. I wanted a memory managed environment away from the JVM that ideally compiled to C/assembly. [Chris Okasaki's, Purely Functional Data Structures]( /papers/okasaki.pdf ) is one key bit of reading that has helped influnce some of my design choices and solidified Haskell as the right language for the job.
+__Haskell__ (some C and C++ here and there)! At first my only reason for choosing Haskell was because I wanted to learn it. As it turned out, many ideas from the functional programming world are excellent for a database and I'm trying to take advantage of all of them. Saying that, I've also seen the problems Cassandra had in the early days where it was entirely reliant on the JVM for memory management. I wanted a memory managed environment away from the JVM that ideally compiled to C/assembly. [Chris Okasaki's, Purely Functional Data Structures]( /papers/okasaki.pdf ) {% cite okasaki %} is one key bit of reading that has helped influnce some of my design choices and solidified Haskell as the right language for the job.
 
 # Is it open source?
 
@@ -92,5 +92,10 @@ So why haven't I done that yet? A lot of what I've created in the last year (jus
   {% assign tags_list = site.tags %}
   {% include JB/tags_list %}
 </ul>
+
+## References
+
+{% bibliography -c %}
+
 
 Built with <a href="http://jekyllbootstrap.com" target="_blank">Jekyll Bootstrap</a> and <a href="http://github.com/dhulihan/hooligan" target="_blank">The Hooligan Theme</a>
