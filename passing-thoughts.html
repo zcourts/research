@@ -1,0 +1,284 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>
+      
+        Passing thoughts - 
+      
+      Research by Courtney Robinson
+    </title>
+    <meta name="description" content="Random thoughts that come to mind">
+    <meta name="author" content="Courtney Robinson">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- HTML5 shim, for IE6-8 support of HTML elements -->
+    <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+
+    <link href="/assets/themes/hooligan/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/assets/themes/hooligan/bootstrap/css/bootstrap-responsive.min.css" rel="stylesheet">    
+    <link rel="stylesheet" type="text/css" href="/assets/themes/hooligan/css-social-buttons/css/zocial.stripped.css">
+    <link href="/assets/themes/hooligan/css/pygments.css" rel="stylesheet" type="text/css" media="all">
+    <link href="/assets/themes/hooligan/css/darkstrap.css" rel="stylesheet" type="text/css" media="all">    
+    <link href="/assets/themes/hooligan/css/style.css?body=1" rel="stylesheet" type="text/css" media="all">
+
+    
+    <!-- fav and touch icons -->
+  <!-- Update these with your own images
+    <link rel="shortcut icon" href="images/favicon.ico">
+    <link rel="apple-touch-icon" href="images/apple-touch-icon.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="images/apple-touch-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="images/apple-touch-icon-114x114.png">
+  -->
+  </head>
+
+  <body>
+    <div class="navbar">
+      <div class="navbar-inner">
+        <div class="container">
+          <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+          <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </a>      
+
+
+          <a class="brand" href="/">Research by Courtney Robinson</a>
+          <a class="brand" href="http://github.com/zcourts/kubo" title="Development currently happens in a private repo but will be made public under a BSD license soon.">Github Project (Kubo)</a>
+
+          <div class="nav-collapse">
+            <ul class="nav">
+              
+              
+              
+
+
+  
+    
+      
+    
+  
+    
+      
+      	
+      	<li><a href="/archive.html">Archive</a></li>
+      	
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+      	
+      	<li><a href="/categories.html">Categories</a></li>
+      	
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+      	
+      	<li><a href="/pages.html">Pages</a></li>
+      	
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+      	
+      	<li><a href="/tags.html">Tags</a></li>
+      	
+      
+    
+  
+    
+      
+    
+  
+
+
+
+            </ul>
+            <ul class="nav pull-right social visible-desktop">
+              <li class="divider-vertical"></li>
+              
+                <li>
+                  <a href="https://github.com/zcourts" class="zocial github icon" target="_blank">
+                    <span class="hidden-desktop">Github</span>
+                  </a>
+                </li>
+              
+              
+                <li>
+                  <a href="https://plus.google.com/117586181712312669408" class="zocial googleplus icon" target="_blank">
+                    <span class="hidden-desktop">Google+</span>
+                  </a>
+                </li>
+                  
+              
+                <li>
+                  <a href="https://twitter.com/zcourts" class="zocial twitter icon" target="_blank">
+                  <span class="hidden-desktop">Twitter</span>
+                  </a>
+                </li>
+                                        
+              
+                <li>
+                  <a href="http://www.facebook.com/zcourts" class="zocial facebook icon" target="_blank">
+                    <span class="hidden-desktop">Facebook</span>
+                  </a>
+                </li>
+                         
+              
+                <li>
+                  <a href="http://www.linkedin.com/in/zcourts" class="zocial linkedin icon" target="_blank">
+                    <span class="hidden-desktop">LinkedIn</span>
+                  </a>
+                </li>
+                                  
+              
+                <li>
+                  <a href="http://feeds.feedburner.com/zcourts-research" class="zocial rss icon" target="_blank">
+                    <span class="hidden-desktop">FeedBurner</span>
+                  </a>
+                </li>
+              
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+      <div class="content">
+        
+<div class="page-header-wrapper">
+	<div class="page-header">
+  		<h1>Passing thoughts </h1>
+  	</div>
+</div>
+
+<div class="row">
+  <div class="span12">
+    <h2>Possible approach to a compressed edge representation</h2>
+
+<p>Vertex is sent to each node and assumes a fair if not even distribution of vertices accross nodes.</p>
+
+<p>Each node builds a bit graph of the vertices it currently owns.
+A bit graph is a structure that represents edges using a single bit for each vertex.
+Each item in the bit set is made of 2 bits. first bit is a vertex and the second bit is the vertex it connects to. if the 3rd bit is a 0 it means the 4th bit represents a vertex not connected to the previous bit/vertex....</p>
+
+<p>locally each node stores a mapping of the bit position to the local vertex id</p>
+
+<p>the bit graph is sent to the tesseri node from all nodes when their vertex set changes over a given threshold. the tesseri then has a complete view of the cluster and can do clustering over the entire graph because each edge is now represented by 2 bits.</p>
+
+<p>This means we can use 8GB to represent up to 34359738368 edges (34.35 billion edges) big enough for many scenarios. Trouble with this and any approach which hoard the entire cluster on one machine is it doesn&#39;t take advantage of multiple machines to do the processing...but it&#39;s an idea that may be useful in another context so putting it down.</p>
+
+<h2>Look ahead graph traversals</h2>
+
+<p>When a query is started, take advantage of the fact that we know all the vertices that will be visited.
+For each vertex that is on a remote Node, issue a traversal request to the Node giving the algorithm to use and any traversal criteria. Where possible bulk these requests into one asyn action.</p>
+
+<h2>Approaching as a classification problem</h2>
+
+<p>Data/Variables/features available include</p>
+
+<ul>
+<li>Number of nodes</li>
+<li>Number of vertices for each node</li>
+<li>Vertex density ratio for each node</li>
+<li>Number of vertices migrated to each node over a given time period</li>
+</ul>
+
+<p>K-Means done per cluster???
+Number of vertices per node must be balanced
+&quot;Rigged Hash&quot; - Hashing a vertex ID goes to a node depending on clustering data</p>
+
+<p>Two phased data organization.
+Upon write, use consistent hashing to place vertex in the cluster.</p>
+
+<p>Have a master node, &quot;Tesseri, i.e. Tesseract&#39;s eye&quot; whose sole job is to re-organize edges in the cluster to minimize network hops. </p>
+
+<p>Every edge is known to this node. With  available computing a 256GB machine is only $899 with hardware raided 1TB SSD and $679 with spindle disks from http://iweb.com/dedicated-server - there may be cheaper options.</p>
+
+<p>This means practically speaking 20 billion vertices can be represented (8 bytes per vertex ID) in 150GB of RAM.</p>
+
+<p>A data structure which borrows ideas from the log-structured merge tree means that even a much smaller RAM can be used, storing some data in memory and merging any overflow to an on-disk file/s. The obvious benefit to bigger ram is faster traversal in memory.</p>
+
+<p>The Tesseract DB must have no single point of failure. As such the any node in the cluster can be elected to be the Tesseri. There are always at least two Nodes marked one is the current Tesseri and the other is the fallback should the first fail.</p>
+
+<p>Only the current Tesseri has a copy of all edges in the cluster. If the current Tesseri fails it would have organized the cluster already so the backup Tesseri can aquire a copy of all edges, after a failure occurs. The assumption being that the backup Tesseri would be able aquire a copy of all edges before the graph becomes imbalanced enough to cause severe traversal problems.</p>
+
+<p>While a node is the Tesseri it should be configurable that it is not considered a part of the cluster. So it doesn&#39;t take part in traversals and focus only on keeping the graph distribution balanced...alternatively it is worth exploring using the Tesseri as the node that performs all traversals...</p>
+
+  </div>
+</div>
+
+
+      </div>
+
+      <footer>
+        <p>&copy; 2013 Courtney Robinson</a> <a href="/terminology.html"> Terminology used</a>
+        </p>
+      </footer>
+    </div> <!-- /container -->
+
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+    <script>window.jQuery || document.write('<script src="/assets/themes/hooligan/js/jquery.min.js"><\/script>')</script>
+    <script src="/assets/themes/hooligan/bootstrap/js/bootstrap.min.js"></script>
+
+    
+  </body>
+</html>
+
