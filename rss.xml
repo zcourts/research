@@ -5,8 +5,8 @@
         <description>Research by Courtney Robinson - Courtney Robinson</description>
         <link>http://research.zcourts.com</link>
         <link>http://research.zcourts.com</link>
-        <lastBuildDate>2014-01-01T01:11:00+00:00</lastBuildDate>
-        <pubDate>2014-01-01T01:11:00+00:00</pubDate>
+        <lastBuildDate>2014-01-01T16:22:48+00:00</lastBuildDate>
+        <pubDate>2014-01-01T16:22:48+00:00</pubDate>
         <ttl>1800</ttl>
 
 
@@ -90,7 +90,7 @@ Check out the other crap I've been doing for my research though...I'm sure there
  &lt;title&gt;Research by Courtney Robinson&lt;/title&gt;
  &lt;link href=&quot;http://research.zcourts.com/&quot; rel=&quot;self&quot;/&gt;
  &lt;link href=&quot;http://research.zcourts.com&quot;/&gt;
- &lt;updated&gt;2014-01-01T01:11:00+00:00&lt;/updated&gt;
+ &lt;updated&gt;2014-01-01T16:22:48+00:00&lt;/updated&gt;
  &lt;id&gt;http://research.zcourts.com&lt;/id&gt;
  &lt;author&gt;
    &lt;name&gt;Courtney Robinson&lt;/name&gt;
@@ -463,31 +463,19 @@ What about this ?
    &lt;id&gt;http://research.zcourts.com&lt;/id&gt;
    &lt;content type=&quot;html&quot;&gt;{% include JB/setup %}
 
-# Mega Push Gossip - MPG
-
-Mega (as in Megaphone) Push Gossipe, MPG is a gossip algorithm favouring push epidemic but taking advantage of pull where appropriate.
+# Abstract - Introduction 
 
 There are lots of gossip algorithms out there. Most of them use a communication model that doesn't directly send messages to nodes in the cluster, instead, information is disseminated by spreading the message with a sub-set of the nodes that'll in turn spread the message to another sub-set until all nodes have gotten the message. Often it takes O(log(n)) hops for all nodes to be updated.
 
 While this is perfectly reasonable and appropriate for the scenarios they were designed for, it is somewhat unnecessary in a distributed database scene. Typically a single cluster has machines in the thousands, not hundredsof thousands or millions, as evidenced by the usage of projects like Hadoop, where [Yahoo!](http://wiki.apache.org/hadoop/PoweredBy#Y) with the largest known cluster is only at 4500 nodes.
 
-Current distributed databases are not really distributed. While their architecture tends to be designed to scale to millions or billions of nodes in a cluster, other practical limitations (usually network/hardware related) often prevent them getting anywhere near the theoretical limits of the architecture/algorithms.
-
-#### Differences and similarities to other gossip algorithms
-
-* MPG is a modification and merger of various gossip protocols. In reality Push Push Pull is a somewhat more suitable name because it ends up pushing at least twice as much information as it pulls. 
-
-* The modification in the protocol is the use of O(1) communication for most operations, or all if possible. 
-
-* Where latency or resource constraints demand it, a fanout approach is used to disamminate messages in O(log(n)) hops.
-
-* In a typical gossip protocol a single node has a partial view of the cluster, MPG changes this so that every node has a complete view, with direct access to routing information of each.
+Current &amp;quot;distributed&amp;quot; databases are not really distributed in the same sense that say, a mobile network's users are distributed. While their architecture tends to be designed to scale to millions or billions of nodes in a cluster, other practical limitations (usually network/hardware related) often prevent them getting anywhere near the theoretical limits of the architecture/algorithms.
 
 ### True cost of gossip
 
 Gossip algorithms are typically described in terms of the number of network hops required to get all nodes up to date. While some mention the total time it takes the focus is often on network hops. With MPG, the cost of gossip has to be calculated differently. MPG assumes TCP over UDP for transmission to help improve delivery reliability. 
  
-#### The latency problem 
+### The latency problem 
 
 Firstly, let's define some terms that may be used to discuss the properties of one gossip protocol.
 Let:
@@ -543,11 +531,77 @@ l = \sum\limits_{r = 1}^{7} 50 \equiv 50 + 50 + 50 + 50 + 50 + 50 + 50 = 350ms, 
 
 i.e given those assumptions, 350ms for a single message and 700ms for a response.
 
-## The number of messages problem
+### The number of messages problem
 
-Only the latency has been considered so far, the number of messages involved in a fanout approach however is also very important. In a distributed database, data is constantly being moved, added and queried, failures and other others are constantly adding to the number of messages that are having to be sent. {% cite voulgaris2007hybrid %} has shown that message overhead increases proportionally to the fanout. The network is a very finate and important resource. Ideally any communication protocol would not send any more messages than was absoluately necessary, in a data intensive system such as a database, a network can easily become saturated. The ideal protocol would help prevent staturation by sending a little meta-data as possible.
+Only the latency has been considered so far, the number of messages involved in a fanout approach however is also very important. In a distributed database, data is constantly being moved, added and queried, failures and other others are constantly adding to the number of messages that are having to be sent. {% cite voulgaris2007hybrid %} has shown that message overhead increases proportionally to the fanout. The network is a very finate and important resource. Ideally any communication protocol would not send any more messages than was absoluately necessary, in a data intensive system such as a database, a network can easily become saturated. The ideal protocol would help prevent staturation by sending a little meta-data as possible. In such a protocol, only failure or unexpected events should cause multiple messages to be sent for the same purpose.
 
+# Mega Push Gossip - MPG
 
+Mega (as in Megaphone) Push Gossipe, MPG is a gossip algorithm favouring push epidemic but taking advantage of pull where appropriate.
+
+### Differences and similarities to other gossip algorithms
+
+* MPG is a modification and merger of various gossip protocols. In reality Push Push Pull is a somewhat more suitable name because it ends up pushing at least twice as much information as it pulls. 
+
+* The modification in the protocol is the use of O(1) communication for most operations, or all if possible. 
+
+* Where latency or resource constraints demand it, a fanout approach is used to disamminate messages in O(log(n)) hops.
+
+* In a typical gossip protocol a single node has a partial view of the cluster, MPG changes this so that every node has a complete view, with direct access to routing information of each.
+
+### Complete view of the world
+
+Nodes in ogssip protocol usually only have a partial view of the cluster for one reason or another. This is typically due to these protocols not being designed specifically for environements with an abundance of memory and are expected to have millions of nodes. For a database however, this assumption is not applicable, servers typically have 10s of gigabytes of RAM dedicated to handling the database. Even without this much memory a complete view of the cluster with routing information for millions of nodes can easily be represented in megabytes of memory.
+
+Assume there are 1 million nodes, n; Each node has a numeric ID, i which is represented by a unsigned 32-bit integer ({%m%}2^{32}-1{%em%}); Routing information (host and port) r, with an average size of 40 bytes. This is the minimal amount of information required to represent all the nodes, other meta data may be included as the system requires but with this information we can estimate that size required to represent all the nodes is:
+
+{%math%}
+S = n (r + i)
+{%endmath%}
+i.e.
+{%math%}
+1,000,000 (40 + 4) = 44,000,000 bytes; 41.96MB
+{%endmath%}
+
+In practice a cluster is unlikely to reach 1 million nodes and for a modest 50K nodes :
+
+{%math%}
+50,000 (40 + 4) = 2,200,000 bytes; 2.098MB
+{%endmath%}
+
+Only a tiny 2MB is needed. 
+
+### Independent and responsible nodes
+
+With MPG, contrary to other gossip protocols, every node is responsible for itself and letting others know of it's existence and state. Only when a node appears to have failed/disappeared will any other node attempt to contact it. Under normal operation each node must push their state and any information they wish to share to the rest of the world.
+
+## Common/Defined operations
+
+Gossip protocols are used for a varient of reasons, below categorizes how MPG is used and defines some operations for each category. Each node has a numeric ID, this ID is assigned after
+
+### Membership
+Each node normally has at least one seed node, unless it is the first node in the cluster. It communicates with the seed nodes to obtain information about the rest of the cluster. Membership operations include:
+
+* world - Request the node being sent the message sends back it's view of the cluster
+* world-hash - Request the node being sent the message sends back a merkle tree representing it's view of the cluster
+* join - Tell a set of nodes that it is joining
+* leave - Gracefully leave the cluster by telling other nodes
+* ping - Pings a set of nodes to let them know it's still alive
+* pong - The response to a ping acknowledging a node's existence
+
+_note_ When a ping-pong interaction occurs, the node that sent the pong no longer needs to send a ping to the node it sent the pong to, both nodes can be confident that they can speak to each other using these two messages.
+
+### Dissemination and Failure detection
+Using gossip to detect failed nodes. If a known node fails to ping or pong there may be a temporary issue or it may have crashed. 
+
+### Anti-entropy
+Repairing replicated data (compare replicas and reconcile differences)
+
+### Aggregates
+Collect per node stats (load etc), combine to form system wide view
+
+### Reputation
+Nodes gain a reputation by being more available and completing more of their tasks without failure. Does the reverse to lose it
 
 * [Université Catholique de louvain, UCL - Gossip lecture](http://www.info.ucl.ac.be/courses/SINF2345/2010-2011/slides/10-Gossip-lecture-hand.pdf)
 * [Gossip Algorithms, MIT](http://web.mit.edu/vdb/www/6.977/l-shah.pdf)
@@ -1556,30 +1610,19 @@ I have a 1st class BEng, Hons Software Engineering degree from Greenwich Univers
 
         <item>
                 <title>Mega Push Gossip - MPG</title>
-                <description>&lt;h1&gt;Mega Push Gossip - MPG&lt;/h1&gt;
-
-&lt;p&gt;Mega (as in Megaphone) Push Gossipe, MPG is a gossip algorithm favouring push epidemic but taking advantage of pull where appropriate.&lt;/p&gt;
+                <description>&lt;h1&gt;Abstract - Introduction&lt;/h1&gt;
 
 &lt;p&gt;There are lots of gossip algorithms out there. Most of them use a communication model that doesn&amp;#39;t directly send messages to nodes in the cluster, instead, information is disseminated by spreading the message with a sub-set of the nodes that&amp;#39;ll in turn spread the message to another sub-set until all nodes have gotten the message. Often it takes O(log(n)) hops for all nodes to be updated.&lt;/p&gt;
 
 &lt;p&gt;While this is perfectly reasonable and appropriate for the scenarios they were designed for, it is somewhat unnecessary in a distributed database scene. Typically a single cluster has machines in the thousands, not hundredsof thousands or millions, as evidenced by the usage of projects like Hadoop, where &lt;a href=&quot;http://wiki.apache.org/hadoop/PoweredBy#Y&quot;&gt;Yahoo!&lt;/a&gt; with the largest known cluster is only at 4500 nodes.&lt;/p&gt;
 
-&lt;p&gt;Current distributed databases are not really distributed. While their architecture tends to be designed to scale to millions or billions of nodes in a cluster, other practical limitations (usually network/hardware related) often prevent them getting anywhere near the theoretical limits of the architecture/algorithms.&lt;/p&gt;
-
-&lt;h4&gt;Differences and similarities to other gossip algorithms&lt;/h4&gt;
-
-&lt;ul&gt;
-&lt;li&gt;&lt;p&gt;MPG is a modification and merger of various gossip protocols. In reality Push Push Pull is a somewhat more suitable name because it ends up pushing at least twice as much information as it pulls. &lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;The modification in the protocol is the use of O(1) communication for most operations, or all if possible. &lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;Where latency or resource constraints demand it, a fanout approach is used to disamminate messages in O(log(n)) hops.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;In a typical gossip protocol a single node has a partial view of the cluster, MPG changes this so that every node has a complete view, with direct access to routing information of each.&lt;/p&gt;&lt;/li&gt;
-&lt;/ul&gt;
+&lt;p&gt;Current &amp;quot;distributed&amp;quot; databases are not really distributed in the same sense that say, a mobile network&amp;#39;s users are distributed. While their architecture tends to be designed to scale to millions or billions of nodes in a cluster, other practical limitations (usually network/hardware related) often prevent them getting anywhere near the theoretical limits of the architecture/algorithms.&lt;/p&gt;
 
 &lt;h3&gt;True cost of gossip&lt;/h3&gt;
 
 &lt;p&gt;Gossip algorithms are typically described in terms of the number of network hops required to get all nodes up to date. While some mention the total time it takes the focus is often on network hops. With MPG, the cost of gossip has to be calculated differently. MPG assumes TCP over UDP for transmission to help improve delivery reliability. &lt;/p&gt;
 
-&lt;h4&gt;The latency problem&lt;/h4&gt;
+&lt;h3&gt;The latency problem&lt;/h3&gt;
 
 &lt;p&gt;Firstly, let&amp;#39;s define some terms that may be used to discuss the properties of one gossip protocol.
 Let:&lt;/p&gt;
@@ -1635,9 +1678,84 @@ l = \sum\limits_{r = 1}^{7} 50 \equiv 50 + 50 + 50 + 50 + 50 + 50 + 50 = 350ms, 
 
 &lt;p&gt;i.e given those assumptions, 350ms for a single message and 700ms for a response.&lt;/p&gt;
 
-&lt;h2&gt;The number of messages problem&lt;/h2&gt;
+&lt;h3&gt;The number of messages problem&lt;/h3&gt;
 
-&lt;p&gt;Only the latency has been considered so far, the number of messages involved in a fanout approach however is also very important. In a distributed database, data is constantly being moved, added and queried, failures and other others are constantly adding to the number of messages that are having to be sent. &lt;a href=&quot;#voulgaris2007hybrid&quot;&gt;(Voulgaris &amp;#38; Van Steen, 2007)&lt;/a&gt; has shown that message overhead increases proportionally to the fanout. The network is a very finate and important resource. Ideally any communication protocol would not send any more messages than was absoluately necessary, in a data intensive system such as a database, a network can easily become saturated. The ideal protocol would help prevent staturation by sending a little meta-data as possible.&lt;/p&gt;
+&lt;p&gt;Only the latency has been considered so far, the number of messages involved in a fanout approach however is also very important. In a distributed database, data is constantly being moved, added and queried, failures and other others are constantly adding to the number of messages that are having to be sent. &lt;a href=&quot;#voulgaris2007hybrid&quot;&gt;(Voulgaris &amp;#38; Van Steen, 2007)&lt;/a&gt; has shown that message overhead increases proportionally to the fanout. The network is a very finate and important resource. Ideally any communication protocol would not send any more messages than was absoluately necessary, in a data intensive system such as a database, a network can easily become saturated. The ideal protocol would help prevent staturation by sending a little meta-data as possible. In such a protocol, only failure or unexpected events should cause multiple messages to be sent for the same purpose.&lt;/p&gt;
+
+&lt;h1&gt;Mega Push Gossip - MPG&lt;/h1&gt;
+
+&lt;p&gt;Mega (as in Megaphone) Push Gossipe, MPG is a gossip algorithm favouring push epidemic but taking advantage of pull where appropriate.&lt;/p&gt;
+
+&lt;h3&gt;Differences and similarities to other gossip algorithms&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;MPG is a modification and merger of various gossip protocols. In reality Push Push Pull is a somewhat more suitable name because it ends up pushing at least twice as much information as it pulls. &lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;The modification in the protocol is the use of O(1) communication for most operations, or all if possible. &lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Where latency or resource constraints demand it, a fanout approach is used to disamminate messages in O(log(n)) hops.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;In a typical gossip protocol a single node has a partial view of the cluster, MPG changes this so that every node has a complete view, with direct access to routing information of each.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3&gt;Complete view of the world&lt;/h3&gt;
+
+&lt;p&gt;Nodes in ogssip protocol usually only have a partial view of the cluster for one reason or another. This is typically due to these protocols not being designed specifically for environements with an abundance of memory and are expected to have millions of nodes. For a database however, this assumption is not applicable, servers typically have 10s of gigabytes of RAM dedicated to handling the database. Even without this much memory a complete view of the cluster with routing information for millions of nodes can easily be represented in megabytes of memory.&lt;/p&gt;
+
+&lt;p&gt;Assume there are 1 million nodes, n; Each node has a numeric ID, i which is represented by a unsigned 32-bit integer (&lt;script type=&quot;math/tex&quot;&gt;2^{32}-1&lt;/script&gt;); Routing information (host and port) r, with an average size of 40 bytes. This is the minimal amount of information required to represent all the nodes, other meta data may be included as the system requires but with this information we can estimate that size required to represent all the nodes is:&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;
+S = n (r + i)
+&lt;/script&gt;
+
+&lt;p&gt;i.e.
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;
+1,000,000 (40 + 4) = 44,000,000 bytes; 41.96MB
+&lt;/script&gt;&lt;/p&gt;
+
+&lt;p&gt;In practice a cluster is unlikely to reach 1 million nodes and for a modest 50K nodes :&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;
+50,000 (40 + 4) = 2,200,000 bytes; 2.098MB
+&lt;/script&gt;
+
+&lt;p&gt;Only a tiny 2MB is needed. &lt;/p&gt;
+
+&lt;h3&gt;Independent and responsible nodes&lt;/h3&gt;
+
+&lt;p&gt;With MPG, contrary to other gossip protocols, every node is responsible for itself and letting others know of it&amp;#39;s existence and state. Only when a node appears to have failed/disappeared will any other node attempt to contact it. Under normal operation each node must push their state and any information they wish to share to the rest of the world.&lt;/p&gt;
+
+&lt;h2&gt;Common/Defined operations&lt;/h2&gt;
+
+&lt;p&gt;Gossip protocols are used for a varient of reasons, below categorizes how MPG is used and defines some operations for each category. Each node has a numeric ID, this ID is assigned after&lt;/p&gt;
+
+&lt;h3&gt;Membership&lt;/h3&gt;
+
+&lt;p&gt;Each node normally has at least one seed node, unless it is the first node in the cluster. It communicates with the seed nodes to obtain information about the rest of the cluster. Membership operations include:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;world - Request the node being sent the message sends back it&amp;#39;s view of the cluster&lt;/li&gt;
+&lt;li&gt;world-hash - Request the node being sent the message sends back a merkle tree representing it&amp;#39;s view of the cluster&lt;/li&gt;
+&lt;li&gt;join - Tell a set of nodes that it is joining&lt;/li&gt;
+&lt;li&gt;leave - Gracefully leave the cluster by telling other nodes&lt;/li&gt;
+&lt;li&gt;ping - Pings a set of nodes to let them know it&amp;#39;s still alive&lt;/li&gt;
+&lt;li&gt;pong - The response to a ping acknowledging a node&amp;#39;s existence&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;em&gt;note&lt;/em&gt; When a ping-pong interaction occurs, the node that sent the pong no longer needs to send a ping to the node it sent the pong to, both nodes can be confident that they can speak to each other using these two messages.&lt;/p&gt;
+
+&lt;h3&gt;Dissemination and Failure detection&lt;/h3&gt;
+
+&lt;p&gt;Using gossip to detect failed nodes. If a known node fails to ping or pong there may be a temporary issue or it may have crashed. &lt;/p&gt;
+
+&lt;h3&gt;Anti-entropy&lt;/h3&gt;
+
+&lt;p&gt;Repairing replicated data (compare replicas and reconcile differences)&lt;/p&gt;
+
+&lt;h3&gt;Aggregates&lt;/h3&gt;
+
+&lt;p&gt;Collect per node stats (load etc), combine to form system wide view&lt;/p&gt;
+
+&lt;h3&gt;Reputation&lt;/h3&gt;
+
+&lt;p&gt;Nodes gain a reputation by being more available and completing more of their tasks without failure. Does the reverse to lose it&lt;/p&gt;
 
 &lt;ul&gt;
 &lt;li&gt;&lt;a href=&quot;http://www.info.ucl.ac.be/courses/SINF2345/2010-2011/slides/10-Gossip-lecture-hand.pdf&quot;&gt;Université Catholique de louvain, UCL - Gossip lecture&lt;/a&gt;&lt;/li&gt;
