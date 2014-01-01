@@ -1,0 +1,330 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>
+      
+        Rated resource access windows, 2RAW - 
+      
+      Research by Courtney Robinson
+    </title>
+    <meta name="description" content="Describes the rated resource access windows management algorithm">
+    <meta name="author" content="Courtney Robinson">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- HTML5 shim, for IE6-8 support of HTML elements -->
+    <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+
+    <link href="/assets/themes/hooligan/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/assets/themes/hooligan/bootstrap/css/bootstrap-responsive.min.css" rel="stylesheet">    
+    <link rel="stylesheet" type="text/css" href="/assets/themes/hooligan/css-social-buttons/css/zocial.stripped.css">
+    <link href="/assets/themes/hooligan/css/pygments.css" rel="stylesheet" type="text/css" media="all">
+    <link href="/assets/themes/hooligan/css/darkstrap.css" rel="stylesheet" type="text/css" media="all">    
+    <link href="/assets/themes/hooligan/css/style.css?body=1" rel="stylesheet" type="text/css" media="all">
+
+    <link rel="alternate" type="application/rss+xml" title="" href="/rss.xml">
+    <link rel="alternate" type="application/atom+xml" title="" href="/atom.xml">
+    <!-- fav and touch icons -->
+  <!-- Update these with your own images
+    <link rel="shortcut icon" href="images/favicon.ico">
+    <link rel="apple-touch-icon" href="images/apple-touch-icon.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="images/apple-touch-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="images/apple-touch-icon-114x114.png">
+  -->
+  </head>
+
+  <body>
+    <div class="navbar">
+      <div class="navbar-inner">
+        <div class="container">
+          <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+          <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </a>      
+
+
+          <a class="brand" href="/">Research by Courtney Robinson</a>
+          <a class="brand" href="http://github.com/zcourts/Tesseract" title="Development currently happens in a private repo but will be made public under a BSD license soon.">Github Project (Tesseract)</a>
+
+          <div class="nav-collapse">
+            <ul class="nav">
+              
+              
+              
+
+
+  
+    
+      
+    
+  
+    
+      
+      	
+      	<li><a href="/archive.html">Archive</a></li>
+      	
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+      	
+      	<li><a href="/categories.html">Categories</a></li>
+      	
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+      	
+      	<li><a href="/pages.html">Pages</a></li>
+      	
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+      	
+      	<li><a href="/tags.html">Tags</a></li>
+      	
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+
+
+
+            </ul>
+            <ul class="nav pull-right social visible-desktop">
+              <li class="divider-vertical"></li>
+              
+                <li>
+                  <a href="https://github.com/zcourts" class="zocial github icon" target="_blank">
+                    <span class="hidden-desktop">Github</span>
+                  </a>
+                </li>
+              
+              
+                <li>
+                  <a href="https://plus.google.com/117586181712312669408" class="zocial googleplus icon" target="_blank">
+                    <span class="hidden-desktop">Google+</span>
+                  </a>
+                </li>
+                  
+              
+                <li>
+                  <a href="https://twitter.com/zcourts" class="zocial twitter icon" target="_blank">
+                  <span class="hidden-desktop">Twitter</span>
+                  </a>
+                </li>
+                                        
+              
+                <li>
+                  <a href="http://www.facebook.com/zcourts" class="zocial facebook icon" target="_blank">
+                    <span class="hidden-desktop">Facebook</span>
+                  </a>
+                </li>
+                         
+              
+                <li>
+                  <a href="http://www.linkedin.com/in/zcourts" class="zocial linkedin icon" target="_blank">
+                    <span class="hidden-desktop">LinkedIn</span>
+                  </a>
+                </li>
+                                  
+              
+                <li>
+                  <a href="http://feeds.feedburner.com/zcourts-research" class="zocial rss icon" target="_blank">
+                    <span class="hidden-desktop">FeedBurner</span>
+                  </a>
+                </li>
+              
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+      <div class="content">
+        
+<div class="page-header-wrapper">
+	<div class="page-header">
+  		<h1>Rated resource access windows, 2RAW </h1>
+  	</div>
+</div>
+
+<div class="row">
+  <div class="span12">
+    <h1>Abstract - Introduction</h1>
+
+<p>It is often the case that the system resources that are needed the most are the most limited. The primary resource considered here is system file descriptors (network connections included). While it would be ideal if we could maintain an open file or a network connection persistently, doing so often causes undersirable side effects, and in the case of a Linux system there are often very restrictive limits (configurable but still restrictive). <a href="#cardwell2000modeling">(Cardwell, Savage &#38; Anderson, 2000)</a> for example has shown that startup activities such as connection establishment and TCP slow start often domminate the latency involved in network communication.</p>
+
+<p>Here, a resource management algorithm is proposed which takes a different approch to reducing access latency (particularly, first access). <a href="#griffioen1994reducing">(Griffioen &#38; Appleton, 1994)</a> have taken a similar approach by attempting to predict usage and pre-fetching data and <a href="#padmanabhan1996using">(Padmanabhan &#38; Mogul, 1996)</a> have explored the predictive approach for networks. The trade of between time and space skews towards space being traded for the reduced latency in the case of file systems. Unfortunately an undesired side effect of such approach is the increased IO as not all data pre-fetched is always required/used.</p>
+
+<p>2RAW is similar but stops short of fetching data unless it is known 100% that the entirety of what is fetched will be used. The connected property of graph data means we know that given a series of connected vertices, unless a stop criteria prevents it, each Vertex will be accessed in the order the are connected. Further, we can predict which data files will be accessed the most using historical access metrics to determine &quot;hot&quot; files and thus pool the connection or file handle.</p>
+
+<h1>Resource management</h1>
+
+<p>2RAW is a combination of two things, pooling/caching the most used file descriptors and prefetching data only when it is guaranteed that the data fetched will be used in its entirety. </p>
+
+<h2>Resource access windows</h2>
+
+<p>The resource manager is configured to maintain the top n file descriptors. Using the access windows file descriptors &quot;bubble&quot; to the top. Any open files above n are closed immediately until the next request that demands it. Access windows can be described as:</p>
+
+<p>For every time tick t where a file is accessed its file descriptor earns a +1 rating. For each tick where the file isn&#39;t accessed, the file descriptor gets a -1 rating. These ratings are cumulative. A tick is a unit of time which begins from the last time a file descriptor was used (usage includes read and write operations). Every operation creates a new window of time during which if the file is used it gains a rating and after which if it hasn&#39;t been used it loses a rating. The following pseudo-code describes how resource access windows works:</p>
+
+<div class="highlight"><pre><code class="bash"><span class="nv">t</span> <span class="o">=</span> 10s <span class="c"># how big is a tick?</span>
+<span class="nv">n</span> <span class="o">=</span> 250 <span class="c">#max number of files descriptors to cache</span>
+<span class="nv">h</span> <span class="o">=</span> 0 <span class="c"># value at which a file is removed independently of Q eval</span>
+<span class="nv">priorityQueue</span> <span class="o">=</span> <span class="o">{}</span>
+
+open<span class="o">(</span>p<span class="o">)</span>
+    <span class="k">if </span>priorityQueue.contains p
+        <span class="nv">f</span> <span class="o">=</span> priorityQueue<span class="o">[</span>p<span class="o">]</span>
+        tick<span class="o">(</span>f<span class="o">)</span>
+        <span class="k">return </span>f
+    <span class="nv">f</span> <span class="o">=</span> openFile<span class="o">(</span>p<span class="o">)</span>
+    <span class="k">while</span><span class="o">(</span>priorityQueue.size &gt;<span class="o">=</span> n<span class="o">)</span>
+        destroy<span class="o">(</span>priorityQueue.pull_minimum_element<span class="o">)</span>
+    priorityQueue +<span class="o">=</span> f
+    tick<span class="o">(</span>f<span class="o">)</span>   
+    <span class="k">return </span>f
+
+<span class="nb">read</span><span class="o">(</span>f<span class="o">)</span>
+    tick<span class="o">(</span>f<span class="o">)</span>
+    ...
+
+write<span class="o">(</span>f<span class="o">)</span>
+    tick<span class="o">(</span>f<span class="o">)</span>
+    ...
+
+tick<span class="o">(</span>f<span class="o">)</span>
+    <span class="k">if </span>f.scheduled
+       f.ts.cancel
+       f.scheduled <span class="o">=</span> False
+    f.rating +<span class="o">=</span> 1    
+
+    f.scheduled <span class="o">=</span> True
+    f.ts <span class="o">=</span> after t
+            f.rating -<span class="o">=</span> 1
+            <span class="k">if </span>f.rating &lt;<span class="o">=</span> h
+                priorityQueue -<span class="o">=</span> f
+                destroy<span class="o">(</span>f<span class="o">)</span>
+
+destroy<span class="o">(</span>f<span class="o">)</span>
+    f.close             
+</code></pre></div>
+
+<p>Given the max number of file descriptors, n to manage; the time unit considered to be 1 tick, t; the threshold at which a file is considered &quot;not hot enough&quot; to be managed, h and a priority queue which ranks it&#39;s items using the ratings value, the algorithm proceeds as such. </p>
+
+<p>When a file is opened, If the file is in the priority queue it is returned and ticked, otherwise the file is opened.</p>
+
+<p>Once opened, if the priority queue&#39;s size is at least n, file descriptors starting with the lowest rated are removed from the queue and destroyed. The new file descriptor is then added, ticked and returned.</p>
+
+<p>Each file operation open, read and write results in a tick. 
+A tick checks if a file descriptor has been scheduled for a rating. If it has, the schedule is cancelled. The file descriptor then receives a +1 rating and is marked as scheduled.
+The scheduling occurs as a background task and after a time tick, t has passed, the scheduler runs. If a scheduler runs it means there hasn&#39;t been a tick early enough to cancel the scheduler, hence the file descriptor receives a -1 rating. The scheduler then proceeds to check if the rating after the -1 results in the file descriptor having a rating equal to or below the allowed threshold. If so, the file descriptor is removed from the queue and destroyed.</p>
+
+<p>Two important things happen as a result of this algorithm, if a file is constantly being used, it is kept open, the more the file is used the longer it is kept open as it will take more -1 ticks for it to be destroyed. </p>
+
+<p>Secondly resource usage remains proportional to system usage, i.e. if for some reason no files are being used by the system, then the resource manager will eventually close all file descriptors automatically when all the files reach the threshold after not being used. This means that even if the process remains running forever, it&#39;ll never keep a file descriptor permanently open unless it was being used.</p>
+
+<p><em>Side note:</em> If a priority queue&#39;s implementation doesn&#39;t support O(1) lookup (i.e. hash based) then the manager can include a hash map which maintains the path =&gt; file descriptor and both the map and queue are updated during addition or removal. Operations are done to the queue first.</p>
+
+<h2>Guaranteed data access prediction</h2>
+
+<h2>References</h2>
+
+<ol class="bibliography"><li><span id="cardwell2000modeling">Cardwell, N., Savage, S., &#38; Anderson, T. (2000). Modeling TCP latency. In <i>INFOCOM 2000. Nineteenth Annual Joint Conference of the IEEE Computer and Communications Societies. Proceedings. IEEE</i> (Vol. 3, 1742–1751).</span></li>
+<li><span id="griffioen1994reducing">Griffioen, J., &#38; Appleton, R. (1994). Reducing File System Latency using a Predictive Approach. In <i>USENIX Summer</i> (197–207).</span></li>
+<li><span id="padmanabhan1996using">Padmanabhan, V. N., &#38; Mogul, J. C. (1996). Using predictive prefetching to improve World Wide Web latency. <i>ACM SIGCOMM Computer Communication Review</i>, <i>26</i>(3), 22–36.</span></li></ol>
+
+  </div>
+</div>
+
+
+      </div>
+
+      <footer>
+        <p>&copy; 2014 Courtney Robinson</a> <a href="/terminology.html"> Terminology used</a>
+        </p>
+      </footer>
+    </div> <!-- /container -->
+
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+    <script>window.jQuery || document.write('<script src="/assets/themes/hooligan/js/jquery.min.js"><\/script>')</script>
+    <script src="/assets/themes/hooligan/bootstrap/js/bootstrap.min.js"></script>
+
+    
+  </body>
+</html>
+

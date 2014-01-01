@@ -137,6 +137,10 @@
   
     
       
+    
+  
+    
+      
       	
       	<li><a href="/tags.html">Tags</a></li>
       	
@@ -243,7 +247,7 @@
 
 <p>Gossip algorithms are typically described in terms of the number of network hops required to get all nodes up to date. While some mention the total time it takes the focus is often on network hops. With MPG, the cost of gossip has to be calculated differently. MPG assumes TCP over UDP for transmission to help improve delivery reliability. </p>
 
-<h4>Other Gossip protocols</h4>
+<h4>The latency problem</h4>
 
 <p>Firstly, let&#39;s define some terms that may be used to discuss the properties of one gossip protocol.
 Let:</p>
@@ -258,9 +262,50 @@ Let:</p>
 
 <p><img src="/assets/gossip-b-f-t.png" alt="Diagram of message dissemination from UCL" title="Diagram of message dissemination from UCL"></p>
 
-<p>In other gossip protocols if a cluster has 100 nodes and communication of a message is required. Assuming each node</p>
+<p>Some gossip algorithms are based on mathematical models of epidemics and how they spread. Two such models are called the &quot;infect and die&quot; and &quot;infect forever&quot; models.Bella Bollobás <a href="#bollobas2001random">(Bollobás, 2001)</a> (reviewed in <a href="#eugster2004epidemic">(Eugster, Guerraoui, Kermarrec &#38; Massoulié, 2004)</a>)has shown that in an &quot;infect and die&quot; or &quot;infect-forever&quot; model, the number of rounds <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=default.js"></script><script type="math/tex">R</script> necessary to infect the entire system is</p>
 
-<h4>Sources</h4>
+<script type="math/tex; mode=display"> 
+R = \frac{log(n)}{log(log(n)))} + O(1)
+</script>
+
+<p>This assumes the number of f targets for contamination is <script type="math/tex">log(n)</script>.</p>
+
+<p>In these models, if a cluster has 100 nodes and communication of a message is required to spread a message would take</p>
+
+<script type="math/tex; mode=display"> 
+R = \frac{log(100)}{log(log(100)))} + O(1); R = 7.64
+</script>
+
+<p>To satisfy f, n would have to be 2, i.e. log(100) = 2 randomly selected nodes will have a message forwarded to them in each round. </p>
+
+<p>In a distributed network, say a mobile network with millions of users, the model is fine and works really well in terms of scalability. In a distributed database however with thousands of nodes or even 100 thousands nodes, the priority is often latency AND the number of messages. Depending on what the gossip protocol is being used for, a message can be emitted at millisecond intervals with expected response times within milliseconds as well. Using the infect-forever or infect and die approach, we can model an estimated latency for dissemination.</p>
+
+<p>This is a simple model that will assume the latency between each node in the cluster is a constant time <script type="math/tex">k</script>. <a href="#cardwell2000modeling">(Cardwell, Savage &#38; Anderson, 2000)</a> shows that in a real world scenario latency is more variable and is dominated by startup effects such as establishing a connection and slow start. They present an approach for modelling TCP latency which takes into account transfer-size, round trip time and packet loss rate. The model presented here however somewhat neglects the dynamic nature of latency and assume it to be constant because even with a constant (low or high), the cumulative latency involved in the infect and die approach is demonstrably higher. In other words just using a constant is enough to prove the point.</p>
+
+<p>Secondly, we assume that each node that recieves a message immediately forwards it and hence that the time taken between receiving a message and forwarding it is negligible. In practice however, not all nodes will be able to forward a message as soon as it is received and this will added to the overall perceived latency of disemminating a message.</p>
+
+<p>Let <script type="math/tex">R</script> be the number of rounds as defined above, <script type="math/tex">n</script> the number of nodes in the cluster, <script type="math/tex">k</script> the latency per round. To spread a message to <script type="math/tex">n</script> nodes, it takes <script type="math/tex">R</script> rounds. Each round incurs a latency of <script type="math/tex">k</script>. Hence the latency to disseminate a message is simply the cumulative of the lot <script type="math/tex">l</script>:</p>
+
+<script type="math/tex; mode=display">
+l = \sum\limits_{r = 1}^R k
+</script>
+
+<p>For a message which requires a response that can be modified as
+<script type="math/tex; mode=display">
+l = 2 \left( \sum\limits_{r = 1}^R k \right)
+</script></p>
+
+<p>Naturally, the value k can be determined <a href="#cardwell2000modeling">(Cardwell, Savage &#38; Anderson, 2000)</a> or other just latency prediction models. In real terms, this means that if there are 100 nodes in the cluster and a constant per round latency of 50 milliseconds, sum over k, from 1 to 7</p>
+
+<script type="math/tex; mode=display">
+l = \sum\limits_{r = 1}^{7} 50 \equiv 50 + 50 + 50 + 50 + 50 + 50 + 50 = 350ms, 2(350) =700ms
+</script>
+
+<p>i.e given those assumptions, 350ms for a single message and 700ms for a response.</p>
+
+<h2>The number of messages problem</h2>
+
+<p>Only the latency has been considered so far, the number of messages involved in a fanout approach however is also very important. In a distributed database, data is constantly being moved, added and queried, failures and other others are constantly adding to the number of messages that are having to be sent. <a href="#voulgaris2007hybrid">(Voulgaris &#38; Van Steen, 2007)</a> has shown that message overhead increases proportionally to the fanout. The network is a very finate and important resource. Ideally any communication protocol would not send any more messages than was absoluately necessary, in a data intensive system such as a database, a network can easily become saturated. The ideal protocol would help prevent staturation by sending a little meta-data as possible.</p>
 
 <ul>
 <li><a href="http://www.info.ucl.ac.be/courses/SINF2345/2010-2011/slides/10-Gossip-lecture-hand.pdf">Université Catholique de louvain, UCL - Gossip lecture</a></li>
@@ -270,7 +315,10 @@ Let:</p>
 
 <h2>References</h2>
 
-<ol class="bibliography"></ol>
+<ol class="bibliography"><li><span id="bollobas2001random">Bollobás, B. (2001). <i>Random graphs</i> (Vol. 73). Cambridge university press.</span></li>
+<li><span id="eugster2004epidemic">Eugster, P. T., Guerraoui, R., Kermarrec, A.-M., &#38; Massoulié, L. (2004). Epidemic information dissemination in distributed systems. <i>Computer</i>, <i>37</i>(5), 60–67.</span></li>
+<li><span id="cardwell2000modeling">Cardwell, N., Savage, S., &#38; Anderson, T. (2000). Modeling TCP latency. In <i>INFOCOM 2000. Nineteenth Annual Joint Conference of the IEEE Computer and Communications Societies. Proceedings. IEEE</i> (Vol. 3, 1742–1751).</span></li>
+<li><span id="voulgaris2007hybrid">Voulgaris, S., &#38; Van Steen, M. (2007). Hybrid dissemination: adding determinism to probabilistic multicasting in large-scale P2P systems. In <i>Proceedings of the ACM/IFIP/USENIX 2007 International Conference on Middleware</i> (389–409).</span></li></ol>
 
   </div>
 </div>
@@ -279,7 +327,7 @@ Let:</p>
       </div>
 
       <footer>
-        <p>&copy; 2013 Courtney Robinson</a> <a href="/terminology.html"> Terminology used</a>
+        <p>&copy; 2014 Courtney Robinson</a> <a href="/terminology.html"> Terminology used</a>
         </p>
       </footer>
     </div> <!-- /container -->

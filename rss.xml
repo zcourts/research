@@ -5,8 +5,8 @@
         <description>Research by Courtney Robinson - Courtney Robinson</description>
         <link>http://research.zcourts.com</link>
         <link>http://research.zcourts.com</link>
-        <lastBuildDate>2013-12-29T21:42:47+00:00</lastBuildDate>
-        <pubDate>2013-12-29T21:42:47+00:00</pubDate>
+        <lastBuildDate>2014-01-01T01:11:00+00:00</lastBuildDate>
+        <pubDate>2014-01-01T01:11:00+00:00</pubDate>
         <ttl>1800</ttl>
 
 
@@ -90,7 +90,7 @@ Check out the other crap I've been doing for my research though...I'm sure there
  &lt;title&gt;Research by Courtney Robinson&lt;/title&gt;
  &lt;link href=&quot;http://research.zcourts.com/&quot; rel=&quot;self&quot;/&gt;
  &lt;link href=&quot;http://research.zcourts.com&quot;/&gt;
- &lt;updated&gt;2013-12-29T21:42:47+00:00&lt;/updated&gt;
+ &lt;updated&gt;2014-01-01T01:11:00+00:00&lt;/updated&gt;
  &lt;id&gt;http://research.zcourts.com&lt;/id&gt;
  &lt;author&gt;
    &lt;name&gt;Courtney Robinson&lt;/name&gt;
@@ -487,7 +487,7 @@ Current distributed databases are not really distributed. While their architectu
 
 Gossip algorithms are typically described in terms of the number of network hops required to get all nodes up to date. While some mention the total time it takes the focus is often on network hops. With MPG, the cost of gossip has to be calculated differently. MPG assumes TCP over UDP for transmission to help improve delivery reliability. 
  
-#### Other Gossip protocols
+#### The latency problem 
 
 Firstly, let's define some terms that may be used to discuss the properties of one gossip protocol.
 Let:
@@ -500,17 +500,61 @@ Let:
 
 ![Diagram of message dissemination from UCL](/assets/gossip-b-f-t.png &amp;quot;Diagram of message dissemination from UCL&amp;quot;)
 
+Some gossip algorithms are based on mathematical models of epidemics and how they spread. Two such models are called the &amp;quot;infect and die&amp;quot; and &amp;quot;infect forever&amp;quot; models.Bella Bollobás {% cite bollobas2001random %} (reviewed in {% cite eugster2004epidemic%})has shown that in an &amp;quot;infect and die&amp;quot; or &amp;quot;infect-forever&amp;quot; model, the number of rounds {%m%}R{%em%} necessary to infect the entire system is
+
+{% math %} 
+R = \frac{log(n)}{log(log(n)))} + O(1)
+{% endmath %}
+
+This assumes the number of f targets for contamination is {%m%}log(n){%em%}.
 
 
-In other gossip protocols if a cluster has 100 nodes and communication of a message is required. Assuming each node
+In these models, if a cluster has 100 nodes and communication of a message is required to spread a message would take
 
-#### Sources
+{% math %} 
+R = \frac{log(100)}{log(log(100)))} + O(1); R = 7.64
+{% endmath %}
+
+To satisfy f, n would have to be 2, i.e. log(100) = 2 randomly selected nodes will have a message forwarded to them in each round. 
+
+In a distributed network, say a mobile network with millions of users, the model is fine and works really well in terms of scalability. In a distributed database however with thousands of nodes or even 100 thousands nodes, the priority is often latency AND the number of messages. Depending on what the gossip protocol is being used for, a message can be emitted at millisecond intervals with expected response times within milliseconds as well. Using the infect-forever or infect and die approach, we can model an estimated latency for dissemination.
+
+This is a simple model that will assume the latency between each node in the cluster is a constant time {%m%}k{%em%}. {% cite cardwell2000modeling %} shows that in a real world scenario latency is more variable and is dominated by startup effects such as establishing a connection and slow start. They present an approach for modelling TCP latency which takes into account transfer-size, round trip time and packet loss rate. The model presented here however somewhat neglects the dynamic nature of latency and assume it to be constant because even with a constant (low or high), the cumulative latency involved in the infect and die approach is demonstrably higher. In other words just using a constant is enough to prove the point.
+
+Secondly, we assume that each node that recieves a message immediately forwards it and hence that the time taken between receiving a message and forwarding it is negligible. In practice however, not all nodes will be able to forward a message as soon as it is received and this will added to the overall perceived latency of disemminating a message.
+
+
+Let {%m%}R{%em%} be the number of rounds as defined above, {%m%}n{%em%} the number of nodes in the cluster, {%m%}k{%em%} the latency per round. To spread a message to {%m%}n{%em%} nodes, it takes {%m%}R{%em%} rounds. Each round incurs a latency of {%m%}k{%em%}. Hence the latency to disseminate a message is simply the cumulative of the lot {%m%}l{%em%}:
+
+{%math%}
+l = \sum\limits_{r = 1}^R k
+{%endmath%}
+
+For a message which requires a response that can be modified as
+{%math%}
+l = 2 \left( \sum\limits_{r = 1}^R k \right)
+{%endmath%}
+
+Naturally, the value k can be determined {% cite cardwell2000modeling %} or other just latency prediction models. In real terms, this means that if there are 100 nodes in the cluster and a constant per round latency of 50 milliseconds, sum over k, from 1 to 7
+
+{%math%}
+l = \sum\limits_{r = 1}^{7} 50 \equiv 50 + 50 + 50 + 50 + 50 + 50 + 50 = 350ms, 2(350) =700ms
+{%endmath%}
+
+i.e given those assumptions, 350ms for a single message and 700ms for a response.
+
+## The number of messages problem
+
+Only the latency has been considered so far, the number of messages involved in a fanout approach however is also very important. In a distributed database, data is constantly being moved, added and queried, failures and other others are constantly adding to the number of messages that are having to be sent. {% cite voulgaris2007hybrid %} has shown that message overhead increases proportionally to the fanout. The network is a very finate and important resource. Ideally any communication protocol would not send any more messages than was absoluately necessary, in a data intensive system such as a database, a network can easily become saturated. The ideal protocol would help prevent staturation by sending a little meta-data as possible.
+
+
 
 * [Université Catholique de louvain, UCL - Gossip lecture](http://www.info.ucl.ac.be/courses/SINF2345/2010-2011/slides/10-Gossip-lecture-hand.pdf)
 * [Gossip Algorithms, MIT](http://web.mit.edu/vdb/www/6.977/l-shah.pdf)
 * [T-Man: Fast gossip-based construction of large-scale overlay topologies](http://lex104.cs.unibo.it/pub/UBLCS/2004/2004-07.pdf)
 
 ## References
+
 {% bibliography -c %}&lt;/content&gt;
  &lt;/entry&gt;
  
@@ -631,6 +675,99 @@ With regards to extra computation, if |i...j| is small enough to be performed in
 ### Super Fast Query Prediction
 
 To take the path prediction to the next level. Real time queries are loaded and remain so on the server. As new data is added it is analyzed and marked. This means that when a request is made for the results of a query, the traversal can be initialized on all Nodes at the same time by using the pre-marked vertices as starting points.&lt;/content&gt;
+ &lt;/entry&gt;
+ 
+ &lt;entry&gt;
+   &lt;title&gt;Rated resource access windows, 2RAW&lt;/title&gt;
+   &lt;link href=&quot;http://research.zcourts.com/rated-resource-access-windows-2raw.html&quot;/&gt;
+   &lt;updated&gt;&lt;/updated&gt;
+   &lt;id&gt;http://research.zcourts.com&lt;/id&gt;
+   &lt;content type=&quot;html&quot;&gt;{% include JB/setup %}
+
+# Abstract - Introduction
+
+It is often the case that the system resources that are needed the most are the most limited. The primary resource considered here is system file descriptors (network connections included). While it would be ideal if we could maintain an open file or a network connection persistently, doing so often causes undersirable side effects, and in the case of a Linux system there are often very restrictive limits (configurable but still restrictive). {% cite cardwell2000modeling %} for example has shown that startup activities such as connection establishment and TCP slow start often domminate the latency involved in network communication.
+
+
+Here, a resource management algorithm is proposed which takes a different approch to reducing access latency (particularly, first access). {% cite griffioen1994reducing %} have taken a similar approach by attempting to predict usage and pre-fetching data and {% cite padmanabhan1996using %} have explored the predictive approach for networks. The trade of between time and space skews towards space being traded for the reduced latency in the case of file systems. Unfortunately an undesired side effect of such approach is the increased IO as not all data pre-fetched is always required/used.
+
+2RAW is similar but stops short of fetching data unless it is known 100% that the entirety of what is fetched will be used. The connected property of graph data means we know that given a series of connected vertices, unless a stop criteria prevents it, each Vertex will be accessed in the order the are connected. Further, we can predict which data files will be accessed the most using historical access metrics to determine &amp;quot;hot&amp;quot; files and thus pool the connection or file handle.
+
+# Resource management
+
+2RAW is a combination of two things, pooling/caching the most used file descriptors and prefetching data only when it is guaranteed that the data fetched will be used in its entirety. 
+
+## Resource access windows
+
+The resource manager is configured to maintain the top n file descriptors. Using the access windows file descriptors &amp;quot;bubble&amp;quot; to the top. Any open files above n are closed immediately until the next request that demands it. Access windows can be described as:
+
+For every time tick t where a file is accessed its file descriptor earns a +1 rating. For each tick where the file isn't accessed, the file descriptor gets a -1 rating. These ratings are cumulative. A tick is a unit of time which begins from the last time a file descriptor was used (usage includes read and write operations). Every operation creates a new window of time during which if the file is used it gains a rating and after which if it hasn't been used it loses a rating. The following pseudo-code describes how resource access windows works:
+
+{% highlight bash %}
+t = 10s # how big is a tick?
+n = 250 #max number of files descriptors to cache
+h = 0 # value at which a file is removed independently of Q eval
+priorityQueue = {}
+
+open(p)
+	if priorityQueue.contains p
+		f = priorityQueue[p]
+		tick(f)
+		return f
+	f = openFile(p)
+	while(priorityQueue.size &amp;gt;= n)
+		destroy(priorityQueue.pull_minimum_element)
+	priorityQueue += f
+	tick(f)	
+	return f
+
+read(f)
+	tick(f)
+	...
+
+write(f)
+	tick(f)
+	...
+
+tick(f)
+	if f.scheduled
+	   f.ts.cancel
+	   f.scheduled = False
+	f.rating += 1	
+
+	f.scheduled = True
+	f.ts = after t
+			f.rating -= 1
+			if f.rating &amp;lt;= h
+				priorityQueue -= f
+				destroy(f)
+
+destroy(f)
+	f.close				
+{%endhighlight%}
+
+Given the max number of file descriptors, n to manage; the time unit considered to be 1 tick, t; the threshold at which a file is considered &amp;quot;not hot enough&amp;quot; to be managed, h and a priority queue which ranks it's items using the ratings value, the algorithm proceeds as such. 
+
+When a file is opened, If the file is in the priority queue it is returned and ticked, otherwise the file is opened.
+
+Once opened, if the priority queue's size is at least n, file descriptors starting with the lowest rated are removed from the queue and destroyed. The new file descriptor is then added, ticked and returned.
+
+Each file operation open, read and write results in a tick. 
+A tick checks if a file descriptor has been scheduled for a rating. If it has, the schedule is cancelled. The file descriptor then receives a +1 rating and is marked as scheduled.
+The scheduling occurs as a background task and after a time tick, t has passed, the scheduler runs. If a scheduler runs it means there hasn't been a tick early enough to cancel the scheduler, hence the file descriptor receives a -1 rating. The scheduler then proceeds to check if the rating after the -1 results in the file descriptor having a rating equal to or below the allowed threshold. If so, the file descriptor is removed from the queue and destroyed.
+
+Two important things happen as a result of this algorithm, if a file is constantly being used, it is kept open, the more the file is used the longer it is kept open as it will take more -1 ticks for it to be destroyed. 
+
+Secondly resource usage remains proportional to system usage, i.e. if for some reason no files are being used by the system, then the resource manager will eventually close all file descriptors automatically when all the files reach the threshold after not being used. This means that even if the process remains running forever, it'll never keep a file descriptor permanently open unless it was being used.
+
+_Side note:_ If a priority queue's implementation doesn't support O(1) lookup (i.e. hash based) then the manager can include a hash map which maintains the path =&amp;gt; file descriptor and both the map and queue are updated during addition or removal. Operations are done to the queue first.
+
+## Guaranteed data access prediction
+
+
+## References
+
+{% bibliography -c %}&lt;/content&gt;
  &lt;/entry&gt;
  
  &lt;entry&gt;
@@ -969,7 +1106,13 @@ Based on the concepts in [virtual nodes](http://www.datastax.com/dev/blog/virtua
 &lt;li&gt;&lt;span id=&quot;walshaw1997parallel&quot;&gt;Walshaw, C., Cross, M., &amp;#38; Everett, Mg. (1997). Parallel dynamic graph partitioning for adaptive unstructured meshes. &lt;i&gt;Journal of Parallel and Distributed Computing&lt;/i&gt;, &lt;i&gt;47&lt;/i&gt;(2), 102–108.&lt;/span&gt;&lt;/li&gt;
 &lt;li&gt;&lt;span id=&quot;dynamo&quot;&gt;DeCandia, G., Hastorun, D., Jampani, M., Kakulapati, G., Lakshman, A., Pilchin, A., Sivasubramanian, S., Vosshall, P., &amp;#38; Vogels, W. (2007). Dynamo: amazon’s highly available key-value store. In &lt;i&gt;SOSP&lt;/i&gt; (Vol. 7, 205–220).&lt;/span&gt;&lt;/li&gt;
 &lt;li&gt;&lt;span id=&quot;coddrelational&quot;&gt;Codd, E. F. (1982). Relational database: a practical foundation for productivity. &lt;i&gt;Communications of the ACM&lt;/i&gt;, &lt;i&gt;25&lt;/i&gt;(2), 109–117.&lt;/span&gt;&lt;/li&gt;
-&lt;li&gt;&lt;span id=&quot;coddsql&quot;&gt;Codd, E. F. (1972). &lt;i&gt;Relational completeness of data base sublanguages&lt;/i&gt;. IBM Corporation.&lt;/span&gt;&lt;/li&gt;&lt;/ol&gt;
+&lt;li&gt;&lt;span id=&quot;coddsql&quot;&gt;Codd, E. F. (1972). &lt;i&gt;Relational completeness of data base sublanguages&lt;/i&gt;. IBM Corporation.&lt;/span&gt;&lt;/li&gt;
+&lt;li&gt;&lt;span id=&quot;eugster2004epidemic&quot;&gt;Eugster, P. T., Guerraoui, R., Kermarrec, A.-M., &amp;#38; Massoulié, L. (2004). Epidemic information dissemination in distributed systems. &lt;i&gt;Computer&lt;/i&gt;, &lt;i&gt;37&lt;/i&gt;(5), 60–67.&lt;/span&gt;&lt;/li&gt;
+&lt;li&gt;&lt;span id=&quot;bollobas2001random&quot;&gt;Bollobás, B. (2001). &lt;i&gt;Random graphs&lt;/i&gt; (Vol. 73). Cambridge university press.&lt;/span&gt;&lt;/li&gt;
+&lt;li&gt;&lt;span id=&quot;cardwell2000modeling&quot;&gt;Cardwell, N., Savage, S., &amp;#38; Anderson, T. (2000). Modeling TCP latency. In &lt;i&gt;INFOCOM 2000. Nineteenth Annual Joint Conference of the IEEE Computer and Communications Societies. Proceedings. IEEE&lt;/i&gt; (Vol. 3, 1742–1751).&lt;/span&gt;&lt;/li&gt;
+&lt;li&gt;&lt;span id=&quot;voulgaris2007hybrid&quot;&gt;Voulgaris, S., &amp;#38; Van Steen, M. (2007). Hybrid dissemination: adding determinism to probabilistic multicasting in large-scale P2P systems. In &lt;i&gt;Proceedings of the ACM/IFIP/USENIX 2007 International Conference on Middleware&lt;/i&gt; (389–409).&lt;/span&gt;&lt;/li&gt;
+&lt;li&gt;&lt;span id=&quot;griffioen1994reducing&quot;&gt;Griffioen, J., &amp;#38; Appleton, R. (1994). Reducing File System Latency using a Predictive Approach. In &lt;i&gt;USENIX Summer&lt;/i&gt; (197–207).&lt;/span&gt;&lt;/li&gt;
+&lt;li&gt;&lt;span id=&quot;padmanabhan1996using&quot;&gt;Padmanabhan, V. N., &amp;#38; Mogul, J. C. (1996). Using predictive prefetching to improve World Wide Web latency. &lt;i&gt;ACM SIGCOMM Computer Communication Review&lt;/i&gt;, &lt;i&gt;26&lt;/i&gt;(3), 22–36.&lt;/span&gt;&lt;/li&gt;&lt;/ol&gt;
 </description>
                 <link>http://research.zcourts.com/bibliography.html</link>
                 <guid>http://research.zcourts.com</guid>
@@ -1255,6 +1398,14 @@ I have a 1st class BEng, Hons Software Engineering degree from Greenwich Univers
     
       
         
+        &lt;li&gt;&lt;a href=&quot;/rated-resource-access-windows-2raw.html&quot;&gt;Rated resource access windows, 2RAW&lt;/a&gt;&lt;/li&gt;
+        
+      
+    
+  
+    
+      
+        
         &lt;li&gt;&lt;a href=&quot;/reading-list.html&quot;&gt;Reading List&lt;/a&gt;&lt;/li&gt;
         
       
@@ -1428,7 +1579,7 @@ I have a 1st class BEng, Hons Software Engineering degree from Greenwich Univers
 
 &lt;p&gt;Gossip algorithms are typically described in terms of the number of network hops required to get all nodes up to date. While some mention the total time it takes the focus is often on network hops. With MPG, the cost of gossip has to be calculated differently. MPG assumes TCP over UDP for transmission to help improve delivery reliability. &lt;/p&gt;
 
-&lt;h4&gt;Other Gossip protocols&lt;/h4&gt;
+&lt;h4&gt;The latency problem&lt;/h4&gt;
 
 &lt;p&gt;Firstly, let&amp;#39;s define some terms that may be used to discuss the properties of one gossip protocol.
 Let:&lt;/p&gt;
@@ -1443,9 +1594,50 @@ Let:&lt;/p&gt;
 
 &lt;p&gt;&lt;img src=&quot;/assets/gossip-b-f-t.png&quot; alt=&quot;Diagram of message dissemination from UCL&quot; title=&quot;Diagram of message dissemination from UCL&quot;&gt;&lt;/p&gt;
 
-&lt;p&gt;In other gossip protocols if a cluster has 100 nodes and communication of a message is required. Assuming each node&lt;/p&gt;
+&lt;p&gt;Some gossip algorithms are based on mathematical models of epidemics and how they spread. Two such models are called the &amp;quot;infect and die&amp;quot; and &amp;quot;infect forever&amp;quot; models.Bella Bollobás &lt;a href=&quot;#bollobas2001random&quot;&gt;(Bollobás, 2001)&lt;/a&gt; (reviewed in &lt;a href=&quot;#eugster2004epidemic&quot;&gt;(Eugster, Guerraoui, Kermarrec &amp;#38; Massoulié, 2004)&lt;/a&gt;)has shown that in an &amp;quot;infect and die&amp;quot; or &amp;quot;infect-forever&amp;quot; model, the number of rounds &lt;script type=&quot;text/javascript&quot; src=&quot;http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=default.js&quot;&gt;&lt;/script&gt;&lt;script type=&quot;math/tex&quot;&gt;R&lt;/script&gt; necessary to infect the entire system is&lt;/p&gt;
 
-&lt;h4&gt;Sources&lt;/h4&gt;
+&lt;script type=&quot;math/tex; mode=display&quot;&gt; 
+R = \frac{log(n)}{log(log(n)))} + O(1)
+&lt;/script&gt;
+
+&lt;p&gt;This assumes the number of f targets for contamination is &lt;script type=&quot;math/tex&quot;&gt;log(n)&lt;/script&gt;.&lt;/p&gt;
+
+&lt;p&gt;In these models, if a cluster has 100 nodes and communication of a message is required to spread a message would take&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt; 
+R = \frac{log(100)}{log(log(100)))} + O(1); R = 7.64
+&lt;/script&gt;
+
+&lt;p&gt;To satisfy f, n would have to be 2, i.e. log(100) = 2 randomly selected nodes will have a message forwarded to them in each round. &lt;/p&gt;
+
+&lt;p&gt;In a distributed network, say a mobile network with millions of users, the model is fine and works really well in terms of scalability. In a distributed database however with thousands of nodes or even 100 thousands nodes, the priority is often latency AND the number of messages. Depending on what the gossip protocol is being used for, a message can be emitted at millisecond intervals with expected response times within milliseconds as well. Using the infect-forever or infect and die approach, we can model an estimated latency for dissemination.&lt;/p&gt;
+
+&lt;p&gt;This is a simple model that will assume the latency between each node in the cluster is a constant time &lt;script type=&quot;math/tex&quot;&gt;k&lt;/script&gt;. &lt;a href=&quot;#cardwell2000modeling&quot;&gt;(Cardwell, Savage &amp;#38; Anderson, 2000)&lt;/a&gt; shows that in a real world scenario latency is more variable and is dominated by startup effects such as establishing a connection and slow start. They present an approach for modelling TCP latency which takes into account transfer-size, round trip time and packet loss rate. The model presented here however somewhat neglects the dynamic nature of latency and assume it to be constant because even with a constant (low or high), the cumulative latency involved in the infect and die approach is demonstrably higher. In other words just using a constant is enough to prove the point.&lt;/p&gt;
+
+&lt;p&gt;Secondly, we assume that each node that recieves a message immediately forwards it and hence that the time taken between receiving a message and forwarding it is negligible. In practice however, not all nodes will be able to forward a message as soon as it is received and this will added to the overall perceived latency of disemminating a message.&lt;/p&gt;
+
+&lt;p&gt;Let &lt;script type=&quot;math/tex&quot;&gt;R&lt;/script&gt; be the number of rounds as defined above, &lt;script type=&quot;math/tex&quot;&gt;n&lt;/script&gt; the number of nodes in the cluster, &lt;script type=&quot;math/tex&quot;&gt;k&lt;/script&gt; the latency per round. To spread a message to &lt;script type=&quot;math/tex&quot;&gt;n&lt;/script&gt; nodes, it takes &lt;script type=&quot;math/tex&quot;&gt;R&lt;/script&gt; rounds. Each round incurs a latency of &lt;script type=&quot;math/tex&quot;&gt;k&lt;/script&gt;. Hence the latency to disseminate a message is simply the cumulative of the lot &lt;script type=&quot;math/tex&quot;&gt;l&lt;/script&gt;:&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;
+l = \sum\limits_{r = 1}^R k
+&lt;/script&gt;
+
+&lt;p&gt;For a message which requires a response that can be modified as
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;
+l = 2 \left( \sum\limits_{r = 1}^R k \right)
+&lt;/script&gt;&lt;/p&gt;
+
+&lt;p&gt;Naturally, the value k can be determined &lt;a href=&quot;#cardwell2000modeling&quot;&gt;(Cardwell, Savage &amp;#38; Anderson, 2000)&lt;/a&gt; or other just latency prediction models. In real terms, this means that if there are 100 nodes in the cluster and a constant per round latency of 50 milliseconds, sum over k, from 1 to 7&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;
+l = \sum\limits_{r = 1}^{7} 50 \equiv 50 + 50 + 50 + 50 + 50 + 50 + 50 = 350ms, 2(350) =700ms
+&lt;/script&gt;
+
+&lt;p&gt;i.e given those assumptions, 350ms for a single message and 700ms for a response.&lt;/p&gt;
+
+&lt;h2&gt;The number of messages problem&lt;/h2&gt;
+
+&lt;p&gt;Only the latency has been considered so far, the number of messages involved in a fanout approach however is also very important. In a distributed database, data is constantly being moved, added and queried, failures and other others are constantly adding to the number of messages that are having to be sent. &lt;a href=&quot;#voulgaris2007hybrid&quot;&gt;(Voulgaris &amp;#38; Van Steen, 2007)&lt;/a&gt; has shown that message overhead increases proportionally to the fanout. The network is a very finate and important resource. Ideally any communication protocol would not send any more messages than was absoluately necessary, in a data intensive system such as a database, a network can easily become saturated. The ideal protocol would help prevent staturation by sending a little meta-data as possible.&lt;/p&gt;
 
 &lt;ul&gt;
 &lt;li&gt;&lt;a href=&quot;http://www.info.ucl.ac.be/courses/SINF2345/2010-2011/slides/10-Gossip-lecture-hand.pdf&quot;&gt;Université Catholique de louvain, UCL - Gossip lecture&lt;/a&gt;&lt;/li&gt;
@@ -1455,7 +1647,10 @@ Let:&lt;/p&gt;
 
 &lt;h2&gt;References&lt;/h2&gt;
 
-&lt;ol class=&quot;bibliography&quot;&gt;&lt;/ol&gt;
+&lt;ol class=&quot;bibliography&quot;&gt;&lt;li&gt;&lt;span id=&quot;bollobas2001random&quot;&gt;Bollobás, B. (2001). &lt;i&gt;Random graphs&lt;/i&gt; (Vol. 73). Cambridge university press.&lt;/span&gt;&lt;/li&gt;
+&lt;li&gt;&lt;span id=&quot;eugster2004epidemic&quot;&gt;Eugster, P. T., Guerraoui, R., Kermarrec, A.-M., &amp;#38; Massoulié, L. (2004). Epidemic information dissemination in distributed systems. &lt;i&gt;Computer&lt;/i&gt;, &lt;i&gt;37&lt;/i&gt;(5), 60–67.&lt;/span&gt;&lt;/li&gt;
+&lt;li&gt;&lt;span id=&quot;cardwell2000modeling&quot;&gt;Cardwell, N., Savage, S., &amp;#38; Anderson, T. (2000). Modeling TCP latency. In &lt;i&gt;INFOCOM 2000. Nineteenth Annual Joint Conference of the IEEE Computer and Communications Societies. Proceedings. IEEE&lt;/i&gt; (Vol. 3, 1742–1751).&lt;/span&gt;&lt;/li&gt;
+&lt;li&gt;&lt;span id=&quot;voulgaris2007hybrid&quot;&gt;Voulgaris, S., &amp;#38; Van Steen, M. (2007). Hybrid dissemination: adding determinism to probabilistic multicasting in large-scale P2P systems. In &lt;i&gt;Proceedings of the ACM/IFIP/USENIX 2007 International Conference on Middleware&lt;/i&gt; (389–409).&lt;/span&gt;&lt;/li&gt;&lt;/ol&gt;
 </description>
                 <link>http://research.zcourts.com/mega-push-gossip-mpg.html</link>
                 <guid>http://research.zcourts.com</guid>
@@ -1565,6 +1760,14 @@ Let:&lt;/p&gt;
       
       	
       	&lt;li&gt;&lt;a href=&quot;/query-model.html&quot;&gt;Query dissemination and result accumulation&lt;/a&gt;&lt;/li&gt;
+      	
+      
+    
+  
+    
+      
+      	
+      	&lt;li&gt;&lt;a href=&quot;/rated-resource-access-windows-2raw.html&quot;&gt;Rated resource access windows, 2RAW&lt;/a&gt;&lt;/li&gt;
       	
       
     
@@ -1744,6 +1947,97 @@ When those vertices are processed if a query criteria isn&amp;#39;t fulfilled th
 &lt;p&gt;To take the path prediction to the next level. Real time queries are loaded and remain so on the server. As new data is added it is analyzed and marked. This means that when a request is made for the results of a query, the traversal can be initialized on all Nodes at the same time by using the pre-marked vertices as starting points.&lt;/p&gt;
 </description>
                 <link>http://research.zcourts.com/query-model.html</link>
+                <guid>http://research.zcourts.com</guid>
+                <pubDate></pubDate>
+        </item>
+
+        <item>
+                <title>Rated resource access windows, 2RAW</title>
+                <description>&lt;h1&gt;Abstract - Introduction&lt;/h1&gt;
+
+&lt;p&gt;It is often the case that the system resources that are needed the most are the most limited. The primary resource considered here is system file descriptors (network connections included). While it would be ideal if we could maintain an open file or a network connection persistently, doing so often causes undersirable side effects, and in the case of a Linux system there are often very restrictive limits (configurable but still restrictive). &lt;a href=&quot;#cardwell2000modeling&quot;&gt;(Cardwell, Savage &amp;#38; Anderson, 2000)&lt;/a&gt; for example has shown that startup activities such as connection establishment and TCP slow start often domminate the latency involved in network communication.&lt;/p&gt;
+
+&lt;p&gt;Here, a resource management algorithm is proposed which takes a different approch to reducing access latency (particularly, first access). &lt;a href=&quot;#griffioen1994reducing&quot;&gt;(Griffioen &amp;#38; Appleton, 1994)&lt;/a&gt; have taken a similar approach by attempting to predict usage and pre-fetching data and &lt;a href=&quot;#padmanabhan1996using&quot;&gt;(Padmanabhan &amp;#38; Mogul, 1996)&lt;/a&gt; have explored the predictive approach for networks. The trade of between time and space skews towards space being traded for the reduced latency in the case of file systems. Unfortunately an undesired side effect of such approach is the increased IO as not all data pre-fetched is always required/used.&lt;/p&gt;
+
+&lt;p&gt;2RAW is similar but stops short of fetching data unless it is known 100% that the entirety of what is fetched will be used. The connected property of graph data means we know that given a series of connected vertices, unless a stop criteria prevents it, each Vertex will be accessed in the order the are connected. Further, we can predict which data files will be accessed the most using historical access metrics to determine &amp;quot;hot&amp;quot; files and thus pool the connection or file handle.&lt;/p&gt;
+
+&lt;h1&gt;Resource management&lt;/h1&gt;
+
+&lt;p&gt;2RAW is a combination of two things, pooling/caching the most used file descriptors and prefetching data only when it is guaranteed that the data fetched will be used in its entirety. &lt;/p&gt;
+
+&lt;h2&gt;Resource access windows&lt;/h2&gt;
+
+&lt;p&gt;The resource manager is configured to maintain the top n file descriptors. Using the access windows file descriptors &amp;quot;bubble&amp;quot; to the top. Any open files above n are closed immediately until the next request that demands it. Access windows can be described as:&lt;/p&gt;
+
+&lt;p&gt;For every time tick t where a file is accessed its file descriptor earns a +1 rating. For each tick where the file isn&amp;#39;t accessed, the file descriptor gets a -1 rating. These ratings are cumulative. A tick is a unit of time which begins from the last time a file descriptor was used (usage includes read and write operations). Every operation creates a new window of time during which if the file is used it gains a rating and after which if it hasn&amp;#39;t been used it loses a rating. The following pseudo-code describes how resource access windows works:&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;bash&quot;&gt;&lt;span class=&quot;nv&quot;&gt;t&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; 10s &lt;span class=&quot;c&quot;&gt;# how big is a tick?&lt;/span&gt;
+&lt;span class=&quot;nv&quot;&gt;n&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; 250 &lt;span class=&quot;c&quot;&gt;#max number of files descriptors to cache&lt;/span&gt;
+&lt;span class=&quot;nv&quot;&gt;h&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; 0 &lt;span class=&quot;c&quot;&gt;# value at which a file is removed independently of Q eval&lt;/span&gt;
+&lt;span class=&quot;nv&quot;&gt;priorityQueue&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{}&lt;/span&gt;
+
+open&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;p&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;if &lt;/span&gt;priorityQueue.contains p
+        &lt;span class=&quot;nv&quot;&gt;f&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; priorityQueue&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;p&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;
+        tick&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;f&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;return &lt;/span&gt;f
+    &lt;span class=&quot;nv&quot;&gt;f&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; openFile&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;p&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;while&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;priorityQueue.size &amp;gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; n&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+        destroy&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;priorityQueue.pull_minimum_element&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+    priorityQueue +&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; f
+    tick&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;f&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;   
+    &lt;span class=&quot;k&quot;&gt;return &lt;/span&gt;f
+
+&lt;span class=&quot;nb&quot;&gt;read&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;f&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+    tick&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;f&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+    ...
+
+write&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;f&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+    tick&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;f&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+    ...
+
+tick&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;f&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;if &lt;/span&gt;f.scheduled
+       f.ts.cancel
+       f.scheduled &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; False
+    f.rating +&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; 1    
+
+    f.scheduled &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; True
+    f.ts &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; after t
+            f.rating -&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; 1
+            &lt;span class=&quot;k&quot;&gt;if &lt;/span&gt;f.rating &amp;lt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; h
+                priorityQueue -&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; f
+                destroy&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;f&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+
+destroy&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;f&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+    f.close             
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;Given the max number of file descriptors, n to manage; the time unit considered to be 1 tick, t; the threshold at which a file is considered &amp;quot;not hot enough&amp;quot; to be managed, h and a priority queue which ranks it&amp;#39;s items using the ratings value, the algorithm proceeds as such. &lt;/p&gt;
+
+&lt;p&gt;When a file is opened, If the file is in the priority queue it is returned and ticked, otherwise the file is opened.&lt;/p&gt;
+
+&lt;p&gt;Once opened, if the priority queue&amp;#39;s size is at least n, file descriptors starting with the lowest rated are removed from the queue and destroyed. The new file descriptor is then added, ticked and returned.&lt;/p&gt;
+
+&lt;p&gt;Each file operation open, read and write results in a tick. 
+A tick checks if a file descriptor has been scheduled for a rating. If it has, the schedule is cancelled. The file descriptor then receives a +1 rating and is marked as scheduled.
+The scheduling occurs as a background task and after a time tick, t has passed, the scheduler runs. If a scheduler runs it means there hasn&amp;#39;t been a tick early enough to cancel the scheduler, hence the file descriptor receives a -1 rating. The scheduler then proceeds to check if the rating after the -1 results in the file descriptor having a rating equal to or below the allowed threshold. If so, the file descriptor is removed from the queue and destroyed.&lt;/p&gt;
+
+&lt;p&gt;Two important things happen as a result of this algorithm, if a file is constantly being used, it is kept open, the more the file is used the longer it is kept open as it will take more -1 ticks for it to be destroyed. &lt;/p&gt;
+
+&lt;p&gt;Secondly resource usage remains proportional to system usage, i.e. if for some reason no files are being used by the system, then the resource manager will eventually close all file descriptors automatically when all the files reach the threshold after not being used. This means that even if the process remains running forever, it&amp;#39;ll never keep a file descriptor permanently open unless it was being used.&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;Side note:&lt;/em&gt; If a priority queue&amp;#39;s implementation doesn&amp;#39;t support O(1) lookup (i.e. hash based) then the manager can include a hash map which maintains the path =&amp;gt; file descriptor and both the map and queue are updated during addition or removal. Operations are done to the queue first.&lt;/p&gt;
+
+&lt;h2&gt;Guaranteed data access prediction&lt;/h2&gt;
+
+&lt;h2&gt;References&lt;/h2&gt;
+
+&lt;ol class=&quot;bibliography&quot;&gt;&lt;li&gt;&lt;span id=&quot;cardwell2000modeling&quot;&gt;Cardwell, N., Savage, S., &amp;#38; Anderson, T. (2000). Modeling TCP latency. In &lt;i&gt;INFOCOM 2000. Nineteenth Annual Joint Conference of the IEEE Computer and Communications Societies. Proceedings. IEEE&lt;/i&gt; (Vol. 3, 1742–1751).&lt;/span&gt;&lt;/li&gt;
+&lt;li&gt;&lt;span id=&quot;griffioen1994reducing&quot;&gt;Griffioen, J., &amp;#38; Appleton, R. (1994). Reducing File System Latency using a Predictive Approach. In &lt;i&gt;USENIX Summer&lt;/i&gt; (197–207).&lt;/span&gt;&lt;/li&gt;
+&lt;li&gt;&lt;span id=&quot;padmanabhan1996using&quot;&gt;Padmanabhan, V. N., &amp;#38; Mogul, J. C. (1996). Using predictive prefetching to improve World Wide Web latency. &lt;i&gt;ACM SIGCOMM Computer Communication Review&lt;/i&gt;, &lt;i&gt;26&lt;/i&gt;(3), 22–36.&lt;/span&gt;&lt;/li&gt;&lt;/ol&gt;
+</description>
+                <link>http://research.zcourts.com/rated-resource-access-windows-2raw.html</link>
                 <guid>http://research.zcourts.com</guid>
                 <pubDate></pubDate>
         </item>

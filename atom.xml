@@ -4,7 +4,7 @@
  <title>Research by Courtney Robinson</title>
  <link href="http://research.zcourts.com/" rel="self"/>
  <link href="http://research.zcourts.com"/>
- <updated>2013-12-29T21:42:47+00:00</updated>
+ <updated>2014-01-01T01:11:00+00:00</updated>
  <id>http://research.zcourts.com</id>
  <author>
    <name>Courtney Robinson</name>
@@ -401,7 +401,7 @@ Current distributed databases are not really distributed. While their architectu
 
 Gossip algorithms are typically described in terms of the number of network hops required to get all nodes up to date. While some mention the total time it takes the focus is often on network hops. With MPG, the cost of gossip has to be calculated differently. MPG assumes TCP over UDP for transmission to help improve delivery reliability. 
  
-#### Other Gossip protocols
+#### The latency problem 
 
 Firstly, let's define some terms that may be used to discuss the properties of one gossip protocol.
 Let:
@@ -414,17 +414,61 @@ Let:
 
 ![Diagram of message dissemination from UCL](/assets/gossip-b-f-t.png &quot;Diagram of message dissemination from UCL&quot;)
 
+Some gossip algorithms are based on mathematical models of epidemics and how they spread. Two such models are called the &quot;infect and die&quot; and &quot;infect forever&quot; models.Bella Bollobás {% cite bollobas2001random %} (reviewed in {% cite eugster2004epidemic%})has shown that in an &quot;infect and die&quot; or &quot;infect-forever&quot; model, the number of rounds {%m%}R{%em%} necessary to infect the entire system is
+
+{% math %} 
+R = \frac{log(n)}{log(log(n)))} + O(1)
+{% endmath %}
+
+This assumes the number of f targets for contamination is {%m%}log(n){%em%}.
 
 
-In other gossip protocols if a cluster has 100 nodes and communication of a message is required. Assuming each node
+In these models, if a cluster has 100 nodes and communication of a message is required to spread a message would take
 
-#### Sources
+{% math %} 
+R = \frac{log(100)}{log(log(100)))} + O(1); R = 7.64
+{% endmath %}
+
+To satisfy f, n would have to be 2, i.e. log(100) = 2 randomly selected nodes will have a message forwarded to them in each round. 
+
+In a distributed network, say a mobile network with millions of users, the model is fine and works really well in terms of scalability. In a distributed database however with thousands of nodes or even 100 thousands nodes, the priority is often latency AND the number of messages. Depending on what the gossip protocol is being used for, a message can be emitted at millisecond intervals with expected response times within milliseconds as well. Using the infect-forever or infect and die approach, we can model an estimated latency for dissemination.
+
+This is a simple model that will assume the latency between each node in the cluster is a constant time {%m%}k{%em%}. {% cite cardwell2000modeling %} shows that in a real world scenario latency is more variable and is dominated by startup effects such as establishing a connection and slow start. They present an approach for modelling TCP latency which takes into account transfer-size, round trip time and packet loss rate. The model presented here however somewhat neglects the dynamic nature of latency and assume it to be constant because even with a constant (low or high), the cumulative latency involved in the infect and die approach is demonstrably higher. In other words just using a constant is enough to prove the point.
+
+Secondly, we assume that each node that recieves a message immediately forwards it and hence that the time taken between receiving a message and forwarding it is negligible. In practice however, not all nodes will be able to forward a message as soon as it is received and this will added to the overall perceived latency of disemminating a message.
+
+
+Let {%m%}R{%em%} be the number of rounds as defined above, {%m%}n{%em%} the number of nodes in the cluster, {%m%}k{%em%} the latency per round. To spread a message to {%m%}n{%em%} nodes, it takes {%m%}R{%em%} rounds. Each round incurs a latency of {%m%}k{%em%}. Hence the latency to disseminate a message is simply the cumulative of the lot {%m%}l{%em%}:
+
+{%math%}
+l = \sum\limits_{r = 1}^R k
+{%endmath%}
+
+For a message which requires a response that can be modified as
+{%math%}
+l = 2 \left( \sum\limits_{r = 1}^R k \right)
+{%endmath%}
+
+Naturally, the value k can be determined {% cite cardwell2000modeling %} or other just latency prediction models. In real terms, this means that if there are 100 nodes in the cluster and a constant per round latency of 50 milliseconds, sum over k, from 1 to 7
+
+{%math%}
+l = \sum\limits_{r = 1}^{7} 50 \equiv 50 + 50 + 50 + 50 + 50 + 50 + 50 = 350ms, 2(350) =700ms
+{%endmath%}
+
+i.e given those assumptions, 350ms for a single message and 700ms for a response.
+
+## The number of messages problem
+
+Only the latency has been considered so far, the number of messages involved in a fanout approach however is also very important. In a distributed database, data is constantly being moved, added and queried, failures and other others are constantly adding to the number of messages that are having to be sent. {% cite voulgaris2007hybrid %} has shown that message overhead increases proportionally to the fanout. The network is a very finate and important resource. Ideally any communication protocol would not send any more messages than was absoluately necessary, in a data intensive system such as a database, a network can easily become saturated. The ideal protocol would help prevent staturation by sending a little meta-data as possible.
+
+
 
 * [Université Catholique de louvain, UCL - Gossip lecture](http://www.info.ucl.ac.be/courses/SINF2345/2010-2011/slides/10-Gossip-lecture-hand.pdf)
 * [Gossip Algorithms, MIT](http://web.mit.edu/vdb/www/6.977/l-shah.pdf)
 * [T-Man: Fast gossip-based construction of large-scale overlay topologies](http://lex104.cs.unibo.it/pub/UBLCS/2004/2004-07.pdf)
 
 ## References
+
 {% bibliography -c %}</content>
  </entry>
  
@@ -545,6 +589,99 @@ With regards to extra computation, if |i...j| is small enough to be performed in
 ### Super Fast Query Prediction
 
 To take the path prediction to the next level. Real time queries are loaded and remain so on the server. As new data is added it is analyzed and marked. This means that when a request is made for the results of a query, the traversal can be initialized on all Nodes at the same time by using the pre-marked vertices as starting points.</content>
+ </entry>
+ 
+ <entry>
+   <title>Rated resource access windows, 2RAW</title>
+   <link href="http://research.zcourts.com/rated-resource-access-windows-2raw.html"/>
+   <updated></updated>
+   <id>http://research.zcourts.com</id>
+   <content type="html">{% include JB/setup %}
+
+# Abstract - Introduction
+
+It is often the case that the system resources that are needed the most are the most limited. The primary resource considered here is system file descriptors (network connections included). While it would be ideal if we could maintain an open file or a network connection persistently, doing so often causes undersirable side effects, and in the case of a Linux system there are often very restrictive limits (configurable but still restrictive). {% cite cardwell2000modeling %} for example has shown that startup activities such as connection establishment and TCP slow start often domminate the latency involved in network communication.
+
+
+Here, a resource management algorithm is proposed which takes a different approch to reducing access latency (particularly, first access). {% cite griffioen1994reducing %} have taken a similar approach by attempting to predict usage and pre-fetching data and {% cite padmanabhan1996using %} have explored the predictive approach for networks. The trade of between time and space skews towards space being traded for the reduced latency in the case of file systems. Unfortunately an undesired side effect of such approach is the increased IO as not all data pre-fetched is always required/used.
+
+2RAW is similar but stops short of fetching data unless it is known 100% that the entirety of what is fetched will be used. The connected property of graph data means we know that given a series of connected vertices, unless a stop criteria prevents it, each Vertex will be accessed in the order the are connected. Further, we can predict which data files will be accessed the most using historical access metrics to determine &quot;hot&quot; files and thus pool the connection or file handle.
+
+# Resource management
+
+2RAW is a combination of two things, pooling/caching the most used file descriptors and prefetching data only when it is guaranteed that the data fetched will be used in its entirety. 
+
+## Resource access windows
+
+The resource manager is configured to maintain the top n file descriptors. Using the access windows file descriptors &quot;bubble&quot; to the top. Any open files above n are closed immediately until the next request that demands it. Access windows can be described as:
+
+For every time tick t where a file is accessed its file descriptor earns a +1 rating. For each tick where the file isn't accessed, the file descriptor gets a -1 rating. These ratings are cumulative. A tick is a unit of time which begins from the last time a file descriptor was used (usage includes read and write operations). Every operation creates a new window of time during which if the file is used it gains a rating and after which if it hasn't been used it loses a rating. The following pseudo-code describes how resource access windows works:
+
+{% highlight bash %}
+t = 10s # how big is a tick?
+n = 250 #max number of files descriptors to cache
+h = 0 # value at which a file is removed independently of Q eval
+priorityQueue = {}
+
+open(p)
+	if priorityQueue.contains p
+		f = priorityQueue[p]
+		tick(f)
+		return f
+	f = openFile(p)
+	while(priorityQueue.size &gt;= n)
+		destroy(priorityQueue.pull_minimum_element)
+	priorityQueue += f
+	tick(f)	
+	return f
+
+read(f)
+	tick(f)
+	...
+
+write(f)
+	tick(f)
+	...
+
+tick(f)
+	if f.scheduled
+	   f.ts.cancel
+	   f.scheduled = False
+	f.rating += 1	
+
+	f.scheduled = True
+	f.ts = after t
+			f.rating -= 1
+			if f.rating &lt;= h
+				priorityQueue -= f
+				destroy(f)
+
+destroy(f)
+	f.close				
+{%endhighlight%}
+
+Given the max number of file descriptors, n to manage; the time unit considered to be 1 tick, t; the threshold at which a file is considered &quot;not hot enough&quot; to be managed, h and a priority queue which ranks it's items using the ratings value, the algorithm proceeds as such. 
+
+When a file is opened, If the file is in the priority queue it is returned and ticked, otherwise the file is opened.
+
+Once opened, if the priority queue's size is at least n, file descriptors starting with the lowest rated are removed from the queue and destroyed. The new file descriptor is then added, ticked and returned.
+
+Each file operation open, read and write results in a tick. 
+A tick checks if a file descriptor has been scheduled for a rating. If it has, the schedule is cancelled. The file descriptor then receives a +1 rating and is marked as scheduled.
+The scheduling occurs as a background task and after a time tick, t has passed, the scheduler runs. If a scheduler runs it means there hasn't been a tick early enough to cancel the scheduler, hence the file descriptor receives a -1 rating. The scheduler then proceeds to check if the rating after the -1 results in the file descriptor having a rating equal to or below the allowed threshold. If so, the file descriptor is removed from the queue and destroyed.
+
+Two important things happen as a result of this algorithm, if a file is constantly being used, it is kept open, the more the file is used the longer it is kept open as it will take more -1 ticks for it to be destroyed. 
+
+Secondly resource usage remains proportional to system usage, i.e. if for some reason no files are being used by the system, then the resource manager will eventually close all file descriptors automatically when all the files reach the threshold after not being used. This means that even if the process remains running forever, it'll never keep a file descriptor permanently open unless it was being used.
+
+_Side note:_ If a priority queue's implementation doesn't support O(1) lookup (i.e. hash based) then the manager can include a hash map which maintains the path =&gt; file descriptor and both the map and queue are updated during addition or removal. Operations are done to the queue first.
+
+## Guaranteed data access prediction
+
+
+## References
+
+{% bibliography -c %}</content>
  </entry>
  
  <entry>
