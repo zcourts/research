@@ -5,8 +5,8 @@
         <description>Research by Courtney Robinson - Courtney Robinson</description>
         <link>http://research.zcourts.com</link>
         <link>http://research.zcourts.com</link>
-        <lastBuildDate>2014-01-17T01:49:02+00:00</lastBuildDate>
-        <pubDate>2014-01-17T01:49:02+00:00</pubDate>
+        <lastBuildDate>2014-01-17T01:57:07+00:00</lastBuildDate>
+        <pubDate>2014-01-17T01:57:07+00:00</pubDate>
         <ttl>1800</ttl>
 
 
@@ -60,6 +60,12 @@ The key to making this happen is immutability. Every snapshot is immutable i.e. 
 &lt;h1&gt;Application&lt;/h1&gt;
 
 &lt;p&gt;This model is useful for computing dynamic global properties. For example, identifying trends in data streams i.e. trending music, people, topics&lt;/p&gt;
+
+&lt;h2&gt;References&lt;/h2&gt;
+
+&lt;ol class=&quot;bibliography&quot;&gt;&lt;li&gt;&lt;span id=&quot;pregel&quot;&gt;Malewicz, G., Austern, M. H., Bik, A. Jc., Dehnert, J. C., Horn, I., Leiser, N., &amp;#38; Czajkowski, G. (2010). Pregel: a system for large-scale graph processing. In &lt;i&gt;Proceedings of the 2010 ACM SIGMOD International Conference on Management of data&lt;/i&gt; (135–146).&lt;/span&gt;&lt;/li&gt;
+&lt;li&gt;&lt;span id=&quot;bsp&quot;&gt;Bisseling, R. H., &amp;#38; McColl, W. F. (1993). Scientific computing on bulk synchronous parallel architectures.&lt;/span&gt;&lt;/li&gt;
+&lt;li&gt;&lt;span id=&quot;okasaki&quot;&gt;Okasaki, C. (1999). &lt;i&gt;Purely functional data structures&lt;/i&gt;. Cambridge University Press.&lt;/span&gt;&lt;/li&gt;&lt;/ol&gt;
 </description>
                 <link>http://research.zcourts.com/general/2014/01/18/goals</link>
                 <guid>http://research.zcourts.com/general/2014/01/18/goals</guid>
@@ -169,7 +175,7 @@ Check out the other crap I&#39;ve been doing for my research though...I&#39;m su
  &lt;title&gt;Research by Courtney Robinson&lt;/title&gt;
  &lt;link href=&quot;http://research.zcourts.com/&quot; rel=&quot;self&quot;/&gt;
  &lt;link href=&quot;http://research.zcourts.com&quot;/&gt;
- &lt;updated&gt;2014-01-17T01:49:02+00:00&lt;/updated&gt;
+ &lt;updated&gt;2014-01-17T01:57:07+00:00&lt;/updated&gt;
  &lt;id&gt;http://research.zcourts.com&lt;/id&gt;
  &lt;author&gt;
    &lt;name&gt;Courtney Robinson&lt;/name&gt;
@@ -230,6 +236,12 @@ The key to making this happen is immutability. Every snapshot is immutable i.e. 
 &amp;lt;h1&amp;gt;Application&amp;lt;/h1&amp;gt;
 
 &amp;lt;p&amp;gt;This model is useful for computing dynamic global properties. For example, identifying trends in data streams i.e. trending music, people, topics&amp;lt;/p&amp;gt;
+
+&amp;lt;h2&amp;gt;References&amp;lt;/h2&amp;gt;
+
+&amp;lt;ol class=&amp;quot;bibliography&amp;quot;&amp;gt;&amp;lt;li&amp;gt;&amp;lt;span id=&amp;quot;pregel&amp;quot;&amp;gt;Malewicz, G., Austern, M. H., Bik, A. Jc., Dehnert, J. C., Horn, I., Leiser, N., &amp;amp;#38; Czajkowski, G. (2010). Pregel: a system for large-scale graph processing. In &amp;lt;i&amp;gt;Proceedings of the 2010 ACM SIGMOD International Conference on Management of data&amp;lt;/i&amp;gt; (135–146).&amp;lt;/span&amp;gt;&amp;lt;/li&amp;gt;
+&amp;lt;li&amp;gt;&amp;lt;span id=&amp;quot;bsp&amp;quot;&amp;gt;Bisseling, R. H., &amp;amp;#38; McColl, W. F. (1993). Scientific computing on bulk synchronous parallel architectures.&amp;lt;/span&amp;gt;&amp;lt;/li&amp;gt;
+&amp;lt;li&amp;gt;&amp;lt;span id=&amp;quot;okasaki&amp;quot;&amp;gt;Okasaki, C. (1999). &amp;lt;i&amp;gt;Purely functional data structures&amp;lt;/i&amp;gt;. Cambridge University Press.&amp;lt;/span&amp;gt;&amp;lt;/li&amp;gt;&amp;lt;/ol&amp;gt;
 &lt;/content&gt;
  &lt;/entry&gt;
  
