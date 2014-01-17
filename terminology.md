@@ -28,4 +28,8 @@ There are cases where terms overlap in definition, where context changes everyth
 
 ## Other terms
 
-1. Node - A node is
+1. Node - A node is an instance of an application running on a server.
+2. Server - A server is an environment capable of executing an instance of an application (i.e. both virtualized and dedicated environments are considered to be servers).
+3. * _Concurrency_ the ability of one or more tasks to be scheduled such that each task appears to progress at an almost equal pace as other tasks.
+
+4. * _Parallelism_ is the ability of a system to take a number of tasks and execute them all at the same time so that progress is not just apparent but actually occurs.
