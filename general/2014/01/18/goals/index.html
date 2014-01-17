@@ -1,0 +1,365 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>
+      
+        Goals of the Tesseract - 
+      
+      Research by Courtney Robinson
+    </title>
+    <meta name="description" content="Broad description of ideas embedded in the Tesseract">
+    <meta name="author" content="Courtney Robinson">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- HTML5 shim, for IE6-8 support of HTML elements -->
+    <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+
+    <link href="/assets/themes/hooligan/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/assets/themes/hooligan/bootstrap/css/bootstrap-responsive.min.css" rel="stylesheet">    
+    <link rel="stylesheet" type="text/css" href="/assets/themes/hooligan/css-social-buttons/css/zocial.stripped.css">
+    <link href="/assets/themes/hooligan/css/pygments.css" rel="stylesheet" type="text/css" media="all">
+    <link href="/assets/themes/hooligan/css/darkstrap.css" rel="stylesheet" type="text/css" media="all">    
+    <link href="/assets/themes/hooligan/css/style.css?body=1" rel="stylesheet" type="text/css" media="all">
+
+    <link rel="alternate" type="application/rss+xml" title="" href="/rss.xml">
+    <link rel="alternate" type="application/atom+xml" title="" href="/atom.xml">
+    <!-- fav and touch icons -->
+  <!-- Update these with your own images
+    <link rel="shortcut icon" href="images/favicon.ico">
+    <link rel="apple-touch-icon" href="images/apple-touch-icon.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="images/apple-touch-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="images/apple-touch-icon-114x114.png">
+  -->
+  </head>
+
+  <body>
+    <div class="navbar">
+      <div class="navbar-inner">
+        <div class="container">
+          <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+          <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </a>      
+
+
+          <a class="brand" href="/">Research by Courtney Robinson</a>
+          <a class="brand" href="http://github.com/zcourts/Tesseract" title="Development currently happens in a private repo but will be made public under a BSD license soon.">Github Project (Tesseract)</a>
+
+          <div class="nav-collapse">
+            <ul class="nav">
+              
+              
+              
+
+
+  
+    
+      
+    
+  
+    
+      
+      	
+      	<li><a href="/archive.html">Archive</a></li>
+      	
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+      	
+      	<li><a href="/categories.html">Categories</a></li>
+      	
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+      	
+      	<li><a href="/pages.html">Pages</a></li>
+      	
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+      	
+      	<li><a href="/tags.html">Tags</a></li>
+      	
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+
+
+
+            </ul>
+            <ul class="nav pull-right social visible-desktop">
+              <li class="divider-vertical"></li>
+              
+                <li>
+                  <a href="https://github.com/zcourts" class="zocial github icon" target="_blank">
+                    <span class="hidden-desktop">Github</span>
+                  </a>
+                </li>
+              
+              
+                <li>
+                  <a href="https://plus.google.com/117586181712312669408" class="zocial googleplus icon" target="_blank">
+                    <span class="hidden-desktop">Google+</span>
+                  </a>
+                </li>
+                  
+              
+                <li>
+                  <a href="https://twitter.com/zcourts" class="zocial twitter icon" target="_blank">
+                  <span class="hidden-desktop">Twitter</span>
+                  </a>
+                </li>
+                                        
+              
+                <li>
+                  <a href="http://www.facebook.com/zcourts" class="zocial facebook icon" target="_blank">
+                    <span class="hidden-desktop">Facebook</span>
+                  </a>
+                </li>
+                         
+              
+                <li>
+                  <a href="http://www.linkedin.com/in/zcourts" class="zocial linkedin icon" target="_blank">
+                    <span class="hidden-desktop">LinkedIn</span>
+                  </a>
+                </li>
+                                  
+              
+                <li>
+                  <a href="http://feeds.feedburner.com/zcourts-research" class="zocial rss icon" target="_blank">
+                    <span class="hidden-desktop">FeedBurner</span>
+                  </a>
+                </li>
+              
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+      <div class="content">
+         <div class="row">
+         <strong>NOTICE</strong> Unless I explicitly say otherwise, all pages and posts on this site are largely speculation based on observations. Where experiments have been done to provide conclusive evidence it is noted. These posts are a brain dump of my thoughts (to capture those elusive moments) at the time of writing, and is therefore likely to change as the results of research proves otherwise. Obviously this does not apply to posts where I describe a technique that has been implemented and tested.
+         </div>
+        
+<div class="page-header">
+  <h1>
+    Goals of the Tesseract 
+    
+  </h1>
+</div>
+
+<div class="row">
+  <div class="span8">
+    <h1>Introduction</h1>
+
+<p>Graph/Network theory in general is a very broad subject. In this post I&#39;ll try to narrow the scope of the project without closing possible routes of exploration later as it develops.</p>
+
+<p>This post is largely a brain dump of my current line of thinking, and is therefore likely to change as the results of research proves otherwise. It encompasses many observations from real world projects but also experiments with available systems on a small scale (few GB of data).</p>
+
+<h4>Concurrency vs Parallelism</h4>
+
+<p>A side note before we go any further. The terms concurrency and parallelism are often used interchangeably. In our case interchanging the two would be incorrect and as such the two terms, when used are used to be interpretted by the following definitions:</p>
+
+<ul>
+<li><p><em>Concurrency</em> the ability of one or more tasks to be scheduled such that each task appears to progress at an almost equal pace as other tasks.</p></li>
+<li><p><em>Parallelism</em> is the ability of a system to take a number of tasks and execute them all at the same time so that progress is not just apparent but actually occurs.</p></li>
+</ul>
+
+<p>In essence the difference is that <em>concurrency</em> means tasks are interleaved, so given tasks 1 to 5, task 1 runs for 1 second, followed by task 2 then task 3 and so on until task 1 runs again, this continues until all tasks are complete. <em>Parallelism</em> means all 5 tasks start and run along side each other.</p>
+
+<h1>Rejecting Bulk synchronous approaches</h1>
+
+<p>Modern graph abstractions such as Pregel <a href="#pregel">(Malewicz, Austern, Bik, Dehnert, Horn, Leiser &#38; Czajkowski, 2010)</a> use the Bulk Synchronous Parallel (BSP) <a href="#bsp">(Bisseling &#38; McColl, 1993)</a> approach to graph processing. This is a credible and proven approach but BSP incurs an expensive synchronization step. It uses what are typically called super steps which is effectively where a group of computations occur and all of them converge on a &#39;border&#39; before moving to the next super step, this convergence means that all BSP based approaches utilizing the sync. step can only ever be as fast as the slowest operation within a superstep. i.e. a super step is made up of n smaller steps that run, usually in parallel, their results accumulate to form the results of their containing superstep and the next super step cannot continue until all the smaller steps have completed.</p>
+
+<h1>Parellelizing graph operations</h1>
+
+<p>A typical data store allows you to ask the question &quot;<strong>What is x?</strong>&quot; and as far as a client is concerned the answer given was correct at the time of the query. Even if it changed moments after the query was finished. Under these usual circumstances a data store only ever really operates on a snapshot
+of the data, this observation is largely implicit.</p>
+
+<p>Given our current models of querying databases, how do you effectively parallelize a query guaranteeing no conflicts or corruption?
+One answer is to ditch most of the current models. Stop being implicit and make snapshot processing an explicit, first class operation.
+The question then becomes <strong>&quot;What is <em>x</em> as of <em>t1</em> and up to <em>t2</em> ?&quot;</strong>.</p>
+
+<p>Aim is, given any query, execute it in parallel across the entire cluster...
+The key to making this happen is immutability. Every snapshot is immutable i.e. functional purity or isolated side effects <a href="#okasaki">(Okasaki, 1999)</a>. Given a function that operates on a snapshot, that function can emit a new version of a value but this results in the existing value being superseeded without modification. Iterative algorithms either operate on the current version of data or are run in parralel on newer versions as soon as the new version is created. This assumes the current iteration doesn&#39;t finish immediately after generating a new version.</p>
+
+<h1>Snap+ =&gt; Matryoshka</h1>
+
+<p>You parralelize a query by creating time slices. Each time slice is a snapshot. Subsequent snapshots are time ordered such that the associativity laws of addition apply, i.e. if all the results of the snapshots are to be added together, the result does not depend on the order in which the snapshots are added.</p>
+
+<p>A merge function is used to combine the result of two snapshot computations. This allows a series of snapshots to have a result computed and each result can become the input to the next application of the merge function.</p>
+
+<p>This results in a model where we begin with lots of small computations that are, in parallel, merged to eventually produce a single result there by resulting in an effect similar to the properties of a matryoshka (Russian nesting doll).</p>
+
+<h1>Streaming</h1>
+
+<p>This approach forms the basis for support of high throughput streams where the answer to a question is only ever correct at a given time and each iteration could yield a vastly different answer depending on how much time has passed and how many new versions of data has been created since the last query.</p>
+
+<h1>Application</h1>
+
+<p>This model is useful for computing dynamic global properties. For example, identifying trends in data streams i.e. trending music, people, topics</p>
+
+    <hr>
+    <div class="pagination btn-group">
+      
+        <a class="btn disabled prev">&larr; Previous</a>
+      
+        <a class="btn" href="/archive.html">Archive</a>
+      
+        <a class="btn next disabled">Next &rarr;</a>
+      
+    </div>
+    <hr>
+    
+
+
+  <div id="disqus_thread"></div>
+<script type="text/javascript">
+    var disqus_developer = 1;
+    var disqus_shortname = 'zcourts'; // required: replace example with your forum shortname
+    
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+
+
+  </div>
+  
+  <div class="span4">
+    <section>
+      <h4>Published</h4>
+      <div class="date"><span>18 January 2014</span></div>
+    </section>
+    
+      <section>
+        <h4>Category</h4>
+        <span class="category">
+          general
+        </span>
+      </section>
+         
+    
+      <section>
+        <h4>Tags</h4>
+        <ul class="tag_box">
+          
+          
+
+
+  
+     
+    	<li><a href="/tags.html#intro-ref">intro <span>1</span></a></li>
+    
+  
+
+
+
+        </ul>
+      </section>
+             
+  </div>
+</div>
+
+
+      </div>
+
+      <footer>
+        <p>&copy; 2014 Courtney Robinson</a> <a href="/terminology.html"> Terminology used</a>
+        </p>
+      </footer>
+    </div> <!-- /container -->
+
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+    <script>window.jQuery || document.write('<script src="/assets/themes/hooligan/js/jquery.min.js"><\/script>')</script>
+    <script src="/assets/themes/hooligan/bootstrap/js/bootstrap.min.js"></script>
+
+    
+  </body>
+</html>
+

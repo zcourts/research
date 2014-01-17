@@ -4,6 +4,10 @@
 		"selected_items":
 		[
 			[
+				"pri",
+				"priorityQueue"
+			],
+			[
 				"cur",
 				"current_branch"
 			]
@@ -12,10 +16,26 @@
 	"buffers":
 	[
 		{
-			"contents": "",
+			"file": "bibtex/references.bib",
 			"settings":
 			{
-				"buffer_size": 0,
+				"buffer_size": 4708,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "_config.yml",
+			"settings":
+			{
+				"buffer_size": 4793,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "mega-push-gossip-mpg.md",
+			"settings":
+			{
+				"buffer_size": 11486,
 				"line_ending": "Windows"
 			}
 		}
@@ -68,13 +88,20 @@
 	},
 	"file_history":
 	[
+		"/C/Users/Courtney/Documents/projects/research/tgq.md",
+		"/C/Users/Courtney/Documents/projects/research/rated-resource-access-windows-2raw.md",
+		"/C/Users/Courtney/Documents/projects/research/file-system-and-io.md",
+		"/C/Users/Courtney/Documents/projects/research/vertex-drift.md",
+		"/C/Users/Courtney/Documents/projects/research/_includes/themes/hooligan/default.html",
+		"/C/Users/Courtney/Documents/projects/research/index.md",
+		"/C/Users/Courtney/Documents/projects/research/atom.xml",
+		"/C/Users/Courtney/Documents/projects/research/rss.xml",
+		"/C/Users/Courtney/Documents/projects/research/_config.yml",
 		"/C/Users/Courtney/Documents/projects/research/publish.sh",
 		"/C/Users/Courtney/Documents/projects/research/passing-thoughts.md",
 		"/C/Users/Courtney/Documents/projects/research/.nojekyll",
 		"/C/Users/Courtney/Documents/projects/research/.gitignore",
-		"/C/Users/Courtney/Documents/projects/research/file-system-and-io.md",
 		"/C/Users/Courtney/Documents/projects/research/bibtex/references.bib",
-		"/C/Users/Courtney/Documents/projects/research/_config.yml",
 		"/C/Users/Courtney/Documents/projects/research/jsc.md",
 		"/C/Users/Courtney/Documents/projects/research/_theme_packages/hooligan/README.md",
 		"/C/Users/Courtney/Documents/projects/research/mega-push-gossip-mpg.md",
@@ -82,7 +109,6 @@
 		"/C/Users/Courtney/Documents/projects/research/_layouts/bibtex.html",
 		"/C/Users/Courtney/Documents/projects/research/_plugins/jsc-plugin.rb",
 		"/C/Users/Courtney/Documents/projects/research/query-model.md",
-		"/C/Users/Courtney/Documents/projects/research/index.md",
 		"/C/Users/Courtney/Documents/projects/research/red.md",
 		"/C/Users/Courtney/Documents/projects/research/README.md",
 		"/C/Users/Courtney/Documents/projects/research/reading-list.md",
@@ -110,10 +136,8 @@
 		"/C/Users/Courtney/Downloads/mmap-0.5.9/cbits/posix.c",
 		"/C/Users/Courtney/Downloads/http-kafka-bridge_push.log",
 		"/C/Users/Courtney/Documents/projects/research/tail.exe.stackdump",
-		"/C/Users/Courtney/Documents/projects/research/_includes/themes/hooligan/default.html",
 		"/C/Users/Courtney/Documents/projects/research/changelog.md",
 		"/C/Users/Courtney/Documents/projects/research/_theme_packages/hooligan/_includes/themes/hooligan/default.html",
-		"/C/Users/Courtney/Documents/projects/research/atom.xml",
 		"/C/Users/Courtney/Documents/projects/research/archive.html",
 		"/C/Users/Courtney/Documents/projects/research/_layouts/post.html",
 		"/C/Users/Courtney/Documents/projects/research/_layouts/default.html",
@@ -123,7 +147,7 @@
 	],
 	"find":
 	{
-		"height": 34.0
+		"height": 23.0
 	},
 	"find_in_files":
 	{
@@ -138,6 +162,7 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"\"Optional title\"",
 			"oldbranch",
 			"Xcite",
 			"gem",
@@ -157,6 +182,8 @@
 		"regex": false,
 		"replace_history":
 		[
+			"\"Number of Justin Bieber followers\"",
+			"Number of Justin Bieber followers",
 			"branch",
 			"cite",
 			"{% endhighlight %}",
@@ -176,15 +203,46 @@
 	"groups":
 	[
 		{
-			"selected": 0,
+			"selected": 2,
 			"sheets":
 			[
 				{
 					"buffer": 0,
+					"file": "bibtex/references.bib",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 0,
+						"buffer_size": 4708,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								252,
+								252
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/LaTeX/Bibtex.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 2,
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "_config.yml",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 4793,
 						"regions":
 						{
 						},
@@ -197,8 +255,37 @@
 						],
 						"settings":
 						{
-							"auto_name": "",
-							"syntax": "Packages/Text/Plain text.tmLanguage"
+							"syntax": "Packages/YAML/YAML.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 1,
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "mega-push-gossip-mpg.md",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 11486,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								11448,
+								11448
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Markdown/Markdown.tmLanguage"
 						},
 						"translation.x": 0.0,
 						"translation.y": 0.0,
@@ -212,7 +299,7 @@
 	],
 	"incremental_find":
 	{
-		"height": 34.0
+		"height": 23.0
 	},
 	"input":
 	{
@@ -256,7 +343,7 @@
 	"project": "project.sublime-project",
 	"replace":
 	{
-		"height": 62.0
+		"height": 42.0
 	},
 	"save_all_on_build": true,
 	"select_file":

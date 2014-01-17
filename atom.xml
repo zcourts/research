@@ -4,13 +4,69 @@
  <title>Research by Courtney Robinson</title>
  <link href="http://research.zcourts.com/" rel="self"/>
  <link href="http://research.zcourts.com"/>
- <updated>2014-01-01T16:22:48+00:00</updated>
+ <updated>2014-01-17T01:49:02+00:00</updated>
  <id>http://research.zcourts.com</id>
  <author>
    <name>Courtney Robinson</name>
    <email>research@crlog.info</email>
  </author>
 
+ 
+ <entry>
+   <title>Goals of the Tesseract</title>
+   <link href="http://research.zcourts.com/general/2014/01/18/goals"/>
+   <updated>2014-01-18T00:00:00+00:00</updated>
+   <id>http://research.zcourts.com/general/2014/01/18/goals</id>
+   <content type="html">&lt;h1&gt;Introduction&lt;/h1&gt;
+
+&lt;p&gt;Graph/Network theory in general is a very broad subject. In this post I&amp;#39;ll try to narrow the scope of the project without closing possible routes of exploration later as it develops.&lt;/p&gt;
+
+&lt;p&gt;This post is largely a brain dump of my current line of thinking, and is therefore likely to change as the results of research proves otherwise. It encompasses many observations from real world projects but also experiments with available systems on a small scale (few GB of data).&lt;/p&gt;
+
+&lt;h4&gt;Concurrency vs Parallelism&lt;/h4&gt;
+
+&lt;p&gt;A side note before we go any further. The terms concurrency and parallelism are often used interchangeably. In our case interchanging the two would be incorrect and as such the two terms, when used are used to be interpretted by the following definitions:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;&lt;em&gt;Concurrency&lt;/em&gt; the ability of one or more tasks to be scheduled such that each task appears to progress at an almost equal pace as other tasks.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;em&gt;Parallelism&lt;/em&gt; is the ability of a system to take a number of tasks and execute them all at the same time so that progress is not just apparent but actually occurs.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;In essence the difference is that &lt;em&gt;concurrency&lt;/em&gt; means tasks are interleaved, so given tasks 1 to 5, task 1 runs for 1 second, followed by task 2 then task 3 and so on until task 1 runs again, this continues until all tasks are complete. &lt;em&gt;Parallelism&lt;/em&gt; means all 5 tasks start and run along side each other.&lt;/p&gt;
+
+&lt;h1&gt;Rejecting Bulk synchronous approaches&lt;/h1&gt;
+
+&lt;p&gt;Modern graph abstractions such as Pregel &lt;a href=&quot;#pregel&quot;&gt;(Malewicz, Austern, Bik, Dehnert, Horn, Leiser &amp;#38; Czajkowski, 2010)&lt;/a&gt; use the Bulk Synchronous Parallel (BSP) &lt;a href=&quot;#bsp&quot;&gt;(Bisseling &amp;#38; McColl, 1993)&lt;/a&gt; approach to graph processing. This is a credible and proven approach but BSP incurs an expensive synchronization step. It uses what are typically called super steps which is effectively where a group of computations occur and all of them converge on a &amp;#39;border&amp;#39; before moving to the next super step, this convergence means that all BSP based approaches utilizing the sync. step can only ever be as fast as the slowest operation within a superstep. i.e. a super step is made up of n smaller steps that run, usually in parallel, their results accumulate to form the results of their containing superstep and the next super step cannot continue until all the smaller steps have completed.&lt;/p&gt;
+
+&lt;h1&gt;Parellelizing graph operations&lt;/h1&gt;
+
+&lt;p&gt;A typical data store allows you to ask the question &amp;quot;&lt;strong&gt;What is x?&lt;/strong&gt;&amp;quot; and as far as a client is concerned the answer given was correct at the time of the query. Even if it changed moments after the query was finished. Under these usual circumstances a data store only ever really operates on a snapshot
+of the data, this observation is largely implicit.&lt;/p&gt;
+
+&lt;p&gt;Given our current models of querying databases, how do you effectively parallelize a query guaranteeing no conflicts or corruption?
+One answer is to ditch most of the current models. Stop being implicit and make snapshot processing an explicit, first class operation.
+The question then becomes &lt;strong&gt;&amp;quot;What is &lt;em&gt;x&lt;/em&gt; as of &lt;em&gt;t1&lt;/em&gt; and up to &lt;em&gt;t2&lt;/em&gt; ?&amp;quot;&lt;/strong&gt;.&lt;/p&gt;
+
+&lt;p&gt;Aim is, given any query, execute it in parallel across the entire cluster...
+The key to making this happen is immutability. Every snapshot is immutable i.e. functional purity or isolated side effects &lt;a href=&quot;#okasaki&quot;&gt;(Okasaki, 1999)&lt;/a&gt;. Given a function that operates on a snapshot, that function can emit a new version of a value but this results in the existing value being superseeded without modification. Iterative algorithms either operate on the current version of data or are run in parralel on newer versions as soon as the new version is created. This assumes the current iteration doesn&amp;#39;t finish immediately after generating a new version.&lt;/p&gt;
+
+&lt;h1&gt;Snap+ =&amp;gt; Matryoshka&lt;/h1&gt;
+
+&lt;p&gt;You parralelize a query by creating time slices. Each time slice is a snapshot. Subsequent snapshots are time ordered such that the associativity laws of addition apply, i.e. if all the results of the snapshots are to be added together, the result does not depend on the order in which the snapshots are added.&lt;/p&gt;
+
+&lt;p&gt;A merge function is used to combine the result of two snapshot computations. This allows a series of snapshots to have a result computed and each result can become the input to the next application of the merge function.&lt;/p&gt;
+
+&lt;p&gt;This results in a model where we begin with lots of small computations that are, in parallel, merged to eventually produce a single result there by resulting in an effect similar to the properties of a matryoshka (Russian nesting doll).&lt;/p&gt;
+
+&lt;h1&gt;Streaming&lt;/h1&gt;
+
+&lt;p&gt;This approach forms the basis for support of high throughput streams where the answer to a question is only ever correct at a given time and each iteration could yield a vastly different answer depending on how much time has passed and how many new versions of data has been created since the last query.&lt;/p&gt;
+
+&lt;h1&gt;Application&lt;/h1&gt;
+
+&lt;p&gt;This model is useful for computing dynamic global properties. For example, identifying trends in data streams i.e. trending music, people, topics&lt;/p&gt;
+</content>
+ </entry>
  
 
  
@@ -23,7 +79,7 @@
 
 Sorry this page does not exist :(
 
-Check out the other crap I've been doing for my research though...I'm sure there's something to peek your interest.
+Check out the other crap I&#39;ve been doing for my research though...I&#39;m sure there&#39;s something to peek your interest.
 
 ## Categories
 
@@ -33,6 +89,10 @@ Check out the other crap I've been doing for my research though...I'm sure there
 
 
   
+     
+    	&lt;li&gt;&lt;a href=&quot;/categories.html#general-ref&quot;&gt;
+    		general &lt;span&gt;1&lt;/span&gt;
+    	&lt;/a&gt;&lt;/li&gt;
     
   
 
@@ -58,6 +118,8 @@ Check out the other crap I've been doing for my research though...I'm sure there
 
 
   
+     
+    	&lt;li&gt;&lt;a href=&quot;/tags.html#intro-ref&quot;&gt;intro &lt;span&gt;1&lt;/span&gt;&lt;/a&gt;&lt;/li&gt;
     
   
 
@@ -78,6 +140,23 @@ Check out the other crap I've been doing for my research though...I'm sure there
 
 
 
+  
+    
+    
+    
+    
+  
+    
+      &lt;h2&gt;2014&lt;/h2&gt;
+      &lt;h3&gt;January&lt;/h3&gt;
+      &lt;ul&gt;
+    
+  
+    &lt;li&gt;&lt;span&gt;January 18, 2014&lt;/span&gt; &amp;raquo; &lt;a href=&quot;/general/2014/01/18/goals&quot;&gt;Goals of the Tesseract&lt;/a&gt;&lt;/li&gt;
+  
+    
+      &lt;/ul&gt;
+    
   
 
 </content>
@@ -180,9 +259,9 @@ A journal is a simple log of all actions to be performed on data. The contents o
 As a graph evolves (more vertices or edges added) the structure can become suboptimal for IO throughput as the disk head is having to do more repositioning to access the next vertex in a traversal.
 A graph database has the advantage of knowing exactly what data it will access next. Taking advantage of this fact can improve the read throughput by reducing the number of repositioning the disk head has to do.
 
-* Every vertex knows it's edges and hence its adjacent vertices.
-* All properties of a vertex can be stored next to each other. Properties here means all a vertex's data attributes and all the edge information (and their data attributes) associated with the vertex.
-* After a vertex's properties are written, the next vertex and it's properties are written in the same way, where the next vertex is one of the adjacent vertices.
+* Every vertex knows it&#39;s edges and hence its adjacent vertices.
+* All properties of a vertex can be stored next to each other. Properties here means all a vertex&#39;s data attributes and all the edge information (and their data attributes) associated with the vertex.
+* After a vertex&#39;s properties are written, the next vertex and it&#39;s properties are written in the same way, where the next vertex is one of the adjacent vertices.
 * Determining which vertex is written next can be determined by whether the file system is optimized for depth or breadth first traversal. This is also a micro-optimization since the very act of placing one of the next vertices after the current one already minimizes how much the disk head has to seek. For a vertex with a small number of adjcent vertices or a large number of small vertices the  movement of the disk head is likely small enough to be negligable.
 
 # Online file compaction
@@ -193,18 +272,18 @@ To avoid locking immutability is used where reasonable to do so. This means that
 
 Taking ideas from Haskell and Cassandra. Using an append only data structure requires compaction in order to clean up deleted or out of date versions.
 
-Instead of doing a background clean up task which can hog resources. Use two files one is the current file being appended to and the second is the previously written to file. Data from the old file pours over from the old file to the new one while it also accepts new data. The fact that old and new data is interleaved doesn't matter because the file index is also written with this slinky like format. Once old data pours over completely into the new one, the old file is removed and the new one continues to be used until it is determined that the process should start again. This reduces the overhead associated with compactions. I've done the experiment with files up to 150GB and recorded a large improvement. Details and exact numbers will be published when I get the time to write everything up in Jan/Feb 2014. (TODO: Write up a page with the results and prepare a paper for publishing)
+Instead of doing a background clean up task which can hog resources. Use two files one is the current file being appended to and the second is the previously written to file. Data from the old file pours over from the old file to the new one while it also accepts new data. The fact that old and new data is interleaved doesn&#39;t matter because the file index is also written with this slinky like format. Once old data pours over completely into the new one, the old file is removed and the new one continues to be used until it is determined that the process should start again. This reduces the overhead associated with compactions. I&#39;ve done the experiment with files up to 150GB and recorded a large improvement. Details and exact numbers will be published when I get the time to write everything up in Jan/Feb 2014. (TODO: Write up a page with the results and prepare a paper for publishing)
 
 # Generational data indexing
 
-The journal and slinky mechanism introduces 3 potential locations for data to be available from. In order to avoid random disk seeks and data searches over potentially several gigabytes or terabytes of data, the file system uses a vertex index, where, given any vertex ID, the index can give the exact byte offset at which the vertex's data begines and in the correct file.
+The journal and slinky mechanism introduces 3 potential locations for data to be available from. In order to avoid random disk seeks and data searches over potentially several gigabytes or terabytes of data, the file system uses a vertex index, where, given any vertex ID, the index can give the exact byte offset at which the vertex&#39;s data begines and in the correct file.
 
 ## Garbage collection style indexing
 
 Trishul M. Chilimbi and James R. Larus (Using Generational Garbage Collection To Implement  Cache-Conscious Data Placement) explored how a generational garbage collector can be used to re-organize data structures in object oriented languages, such that objects with a high temporal affinity are placed next to each other to increate the likely hood of those objects being placed in the same cache block.
 
 While their goals are somewhat different a similar technique can be used for disk based file systems.
-There are three primary files involved in the file system and at any point the system must be able to specifically identify which file and which byte offset a vertex's data starts at.
+There are three primary files involved in the file system and at any point the system must be able to specifically identify which file and which byte offset a vertex&#39;s data starts at.
 
 Classify each file as a generation such that eden or first generation is the journal, tenured or second generation is old commit file to be compacted and perm or third generation is the new commit file being written to.
 
@@ -218,14 +297,14 @@ When a vertex, edge or an attribute of either is added, the operation is written
 
 
 ### Edit vertex or edge
-Edit's are strictly speaking not supported as a user operation. Any action akin to an edit actually creates a new version of the old data. No in place edit is exposed to the user.
+Edit&#39;s are strictly speaking not supported as a user operation. Any action akin to an edit actually creates a new version of the old data. No in place edit is exposed to the user.
 
 ## Remove vertex or edge
 
 main point is write to journal then gc phase copy to commit log after commit log update index, after index points to new location log can optionally be truncated.
-point is that index isn't update until after data exists in the next generation.
+point is that index isn&#39;t update until after data exists in the next generation.
 
-then like GC 2nd gen is copied to 3rd gen but again index isn't updated until after data is commited to 3rd gen
+then like GC 2nd gen is copied to 3rd gen but again index isn&#39;t updated until after data is commited to 3rd gen
 
 
 during slinky compaction deleted data is not copied from the 2nd to the 3rd gen hence resulting in compaction
@@ -237,7 +316,7 @@ The byte structure of the data is needed to ensure consistency across implementa
 
 The amount of data in a single file can grow to the point where seeking becomes a bottle neck. To avoid this, all files (persistent index and 1st to 3rd gen data files) are segmented when the data reaches a given size, m. What this means for the in memory data structures is that they need to be segment aware. Segments are simply named incrementally. 
 
-To avoid approaching or hitting the OS's file system limits the segmentation (e.g. 31998 sub-directory limit in ext3, 16GB max file size with 1KB blocks) is taken further.
+To avoid approaching or hitting the OS&#39;s file system limits the segmentation (e.g. 31998 sub-directory limit in ext3, 16GB max file size with 1KB blocks) is taken further.
 
 ## Index format
 
@@ -254,30 +333,30 @@ To avoid approaching or hitting the OS's file system limits the segmentation (e.
 
 # What?
 
-What am I researching? Simply put, I'm trying to find a practical, scalable way to build a distributed graph database.
+What am I researching? Simply put, I&#39;m trying to find a practical, scalable way to build a distributed graph database.
 
-### Why, isn't there a lot of work being done on that front already?
+### Why, isn&#39;t there a lot of work being done on that front already?
 
 Yes. In fact, the last 30 or so years has seen a significant amount of work being done in the graph field. However, we have yet to realize the full potential of these, almost ubiquitous structures. Graph traversals in particular remain an extremely difficult thing to do on very large data sets.
 
 ### Another Big Data project?
 
-__No this isn't another &quot;Big Data&quot; blah blah.__ Recent strides in data warehousing/processing have had both a good and bad impact on the field. I'm of the opinion that it is actually unfortunate that Graph databases have been lobbed under the whole Big Data marketing hype. At the same time, the exposure has increased the amount of research in the area so I'm somewhat in two minds about that.
+__No this isn&#39;t another &quot;Big Data&quot; blah blah.__ Recent strides in data warehousing/processing have had both a good and bad impact on the field. I&#39;m of the opinion that it is actually unfortunate that Graph databases have been lobbed under the whole Big Data marketing hype. At the same time, the exposure has increased the amount of research in the area so I&#39;m somewhat in two minds about that.
 
 # Why
 
-I'm a big fan of [Cassandra](http://cassandra.apache.org) {% cite cassandra %}. I've been working with it since 2008, not long after it was open sourced by Facebook.
+I&#39;m a big fan of [Cassandra](http://cassandra.apache.org) {% cite cassandra %}. I&#39;ve been working with it since 2008, not long after it was open sourced by Facebook.
 
 My fascination with Graphs started when I realized that a lot of the work I did, a lot of what I know other people use Cassandra for could actually be represented and queried more efficiently as Graphs.
 
 I explored existing projects like [Titan](http://thinkaurelius.github.io/titan/) and went through related projects in the [TinkerPop Stack](http://www.tinkerpop.com/).
-Twitter's [FlockDB](https://github.com/twitter/flockdb), [Mizan](http://thegraphsblog.wordpress.com/the-graph-blog/mizan/) {% cite mizan %} and others, but they all fall short in one way or another. Having said that, GraphLab have an excellent technique known as [GraphChi](http://graphlab.org/graphchi/) or rather the algorithm is called &quot;Parallel sliding windows&quot; {% cite graphchi %} - I'm combining this with my own distributed partition algorithm (paper soon).
+Twitter&#39;s [FlockDB](https://github.com/twitter/flockdb), [Mizan](http://thegraphsblog.wordpress.com/the-graph-blog/mizan/) {% cite mizan %} and others, but they all fall short in one way or another. Having said that, GraphLab have an excellent technique known as [GraphChi](http://graphlab.org/graphchi/) or rather the algorithm is called &quot;Parallel sliding windows&quot; {% cite graphchi %} - I&#39;m combining this with my own distributed partition algorithm (paper soon).
 
-# It's all about speed
+# It&#39;s all about speed
 
-Ultimately the big issue with distributed graph traversal comes down to speed. And that's all there is to it...sort of.
+Ultimately the big issue with distributed graph traversal comes down to speed. And that&#39;s all there is to it...sort of.
 
-Actually the big problem is partitioning a dynamic, evolving distributed graph. The location of a vertex affects how fast it and it's edges can be traversed in a query (so speed).
+Actually the big problem is partitioning a dynamic, evolving distributed graph. The location of a vertex affects how fast it and it&#39;s edges can be traversed in a query (so speed).
 
 # Premise, Current line of thinking
 
@@ -285,32 +364,32 @@ The cost of accessing vertices across servers (nodes) depends mainly on the spee
 
 # Amortization... you what now?
 
-[Robert Tarjan's, Amortized Computational Complexity]( /papers/Amortized%20Computational%20Complexity.pdf ) {% cite amortization %} formally introduced the idea of amortized computational costs. It's a simple but note worthy idea. My premise is in effect rested on this idea. That is, computational complexity isn't a simple matter of determining 'big O'. A system's purpose is to perform a given set of tasks, these tasks typically are broken down into smaller tasks. Each requiring a varying amount of computing resources/time. Amortization rests on the idea that some tasks are more &quot;expensive&quot; than others. If there are enough &quot;cheap&quot; tasks, each time they run the acrue &quot;credit&quot; that can eventually be spent performing the more expensive tasks. It follows that, if there are enough cheap tasks to consistently provide enough credit then the effects of performing more expensive tasks can effectively be thought of has being negligable...or there abouts.
+[Robert Tarjan&#39;s, Amortized Computational Complexity]( /papers/Amortized%20Computational%20Complexity.pdf ) {% cite amortization %} formally introduced the idea of amortized computational costs. It&#39;s a simple but note worthy idea. My premise is in effect rested on this idea. That is, computational complexity isn&#39;t a simple matter of determining &#39;big O&#39;. A system&#39;s purpose is to perform a given set of tasks, these tasks typically are broken down into smaller tasks. Each requiring a varying amount of computing resources/time. Amortization rests on the idea that some tasks are more &quot;expensive&quot; than others. If there are enough &quot;cheap&quot; tasks, each time they run the acrue &quot;credit&quot; that can eventually be spent performing the more expensive tasks. It follows that, if there are enough cheap tasks to consistently provide enough credit then the effects of performing more expensive tasks can effectively be thought of has being negligable...or there abouts.
 
 Naturally I paraphrased that. And that is, at least in my mind a decent interpretation of amortized costs/complexity.
 
 # Who?
 
-Okay, okay, I got the idea. You're trying to do something that's been done 50 times already. Who are you anyway?
+Okay, okay, I got the idea. You&#39;re trying to do something that&#39;s been done 50 times already. Who are you anyway?
 
-Well, my name is Courtney Robinson. On the web you can find me under the username &quot;zcourts&quot;. If it matters, If I'm a member, I'll be registered under that username, unless the service doesn't allow me to...in which case that service probaly doesn't matter so I'm not registered :P.
-I have a 1st class BEng, Hons Software Engineering degree from Greenwich University. I'm a proud born and largely raised Jamaican, naturalized Briton and your not so every day hacker. I'm in my early 20s building awesome stuff at [DataSift](http://datasift.com).
+Well, my name is Courtney Robinson. On the web you can find me under the username &quot;zcourts&quot;. If it matters, If I&#39;m a member, I&#39;ll be registered under that username, unless the service doesn&#39;t allow me to...in which case that service probaly doesn&#39;t matter so I&#39;m not registered :P.
+I have a 1st class BEng, Hons Software Engineering degree from Greenwich University. I&#39;m a proud born and largely raised Jamaican, naturalized Briton and your not so every day hacker. I&#39;m in my early 20s building awesome stuff at [DataSift](http://datasift.com).
 
 I started working on this project during my final year while I was attempting to build my own startup.
 
-# What's it called?
+# What&#39;s it called?
 
-It's a bit early to be naming &quot;it&quot;, even though I've been building this for about a year, I'm not ready to release it yet. However, I have named it, I really wanted to call it &quot;Tesseract&quot;, so much so that when all permutations of that domain name were unavailable, I tried all permutations of it's translation that still sounded cool, and that I could actually pronounce. Eventually came accross hiperkubo which is Esperanto for Tesseract. I didn't like the entire thing for a name but quite liked kubo. So I registered &quot;[kubo.io](http://kubo.io)&quot;.
+It&#39;s a bit early to be naming &quot;it&quot;, even though I&#39;ve been building this for about a year, I&#39;m not ready to release it yet. However, I have named it, I really wanted to call it &quot;Tesseract&quot;, so much so that when all permutations of that domain name were unavailable, I tried all permutations of it&#39;s translation that still sounded cool, and that I could actually pronounce. Eventually came accross hiperkubo which is Esperanto for Tesseract. I didn&#39;t like the entire thing for a name but quite liked kubo. So I registered &quot;[kubo.io](http://kubo.io)&quot;.
 
-# What's it written in?
+# What&#39;s it written in?
 
-__Haskell__ (some C and C++ here and there)! At first my only reason for choosing Haskell was because I wanted to learn it. As it turned out, many ideas from the functional programming world are excellent for a database and I'm trying to take advantage of all of them. Saying that, I've also seen the problems Cassandra had in the early days where it was entirely reliant on the JVM for memory management. I wanted a memory managed environment away from the JVM that ideally compiled to C/assembly. [Chris Okasaki's, Purely Functional Data Structures]( /papers/okasaki.pdf ) {% cite okasaki %} is one key bit of reading that has helped influnce some of my design choices and solidified Haskell as the right language for the job.
+__Haskell__ (some C and C++ here and there)! At first my only reason for choosing Haskell was because I wanted to learn it. As it turned out, many ideas from the functional programming world are excellent for a database and I&#39;m trying to take advantage of all of them. Saying that, I&#39;ve also seen the problems Cassandra had in the early days where it was entirely reliant on the JVM for memory management. I wanted a memory managed environment away from the JVM that ideally compiled to C/assembly. [Chris Okasaki&#39;s, Purely Functional Data Structures]( /papers/okasaki.pdf ) {% cite okasaki %} is one key bit of reading that has helped influnce some of my design choices and solidified Haskell as the right language for the job.
 
 # Is it open source?
 
-It will be! I'm planning to release it under either a 3-clause BSD or the Apache v2 license. 
+It will be! I&#39;m planning to release it under either a 3-clause BSD or the Apache v2 license. 
 
-So why haven't I done that yet? A lot of what I've created in the last year (just over a year now I think) or so are pieces of the puzzle. Independent experiments that together will form a complete system, but the glue to get them together as one hasn't been written yet so it's not fully functional as a system. I have experiments in three areas, file systems, query engine and data caching. Effectly all the pieces are there but I won't bring them together until I'm satisfied with the performance/algorithms of each independently.
+So why haven&#39;t I done that yet? A lot of what I&#39;ve created in the last year (just over a year now I think) or so are pieces of the puzzle. Independent experiments that together will form a complete system, but the glue to get them together as one hasn&#39;t been written yet so it&#39;s not fully functional as a system. I have experiments in three areas, file systems, query engine and data caching. Effectly all the pieces are there but I won&#39;t bring them together until I&#39;m satisfied with the performance/algorithms of each independently.
 
 # Pages
 
@@ -354,7 +433,7 @@ Built with &lt;a href=&quot;http://jekyllbootstrap.com&quot; target=&quot;_blank
    <id>http://research.zcourts.com</id>
    <content type="html">{% include JB/setup %}
 
-Mark down using cite {% cite pagh2005optimal %}, is new but invention x {% cite boom2 %} is awesome. Twas a creation of J's {% cite boom3 %} {% cite kirsch2006distance %}. Do you know what {% m %}e = mc^2{% em %} actually means? But do you really?
+Mark down using cite {% cite pagh2005optimal %}, is new but invention x {% cite boom2 %} is awesome. Twas a creation of J&#39;s {% cite boom3 %} {% cite kirsch2006distance %}. Do you know what {% m %}e = mc^2{% em %} actually means? But do you really?
 
 What about this ?
 
@@ -379,11 +458,11 @@ What about this ?
 
 # Abstract - Introduction 
 
-There are lots of gossip algorithms out there. Most of them use a communication model that doesn't directly send messages to nodes in the cluster, instead, information is disseminated by spreading the message with a sub-set of the nodes that'll in turn spread the message to another sub-set until all nodes have gotten the message. Often it takes O(log(n)) hops for all nodes to be updated.
+There are lots of gossip algorithms out there. Most of them use a communication model that doesn&#39;t directly send messages to nodes in the cluster, instead, information is disseminated by spreading the message with a sub-set of the nodes that&#39;ll in turn spread the message to another sub-set until all nodes have gotten the message. Often it takes O(log(n)) hops for all nodes to be updated.
 
 While this is perfectly reasonable and appropriate for the scenarios they were designed for, it is somewhat unnecessary in a distributed database scene. Typically a single cluster has machines in the thousands, not hundredsof thousands or millions, as evidenced by the usage of projects like Hadoop, where [Yahoo!](http://wiki.apache.org/hadoop/PoweredBy#Y) with the largest known cluster is only at 4500 nodes.
 
-Current &quot;distributed&quot; databases are not really distributed in the same sense that say, a mobile network's users are distributed. While their architecture tends to be designed to scale to millions or billions of nodes in a cluster, other practical limitations (usually network/hardware related) often prevent them getting anywhere near the theoretical limits of the architecture/algorithms.
+Current &quot;distributed&quot; databases are not really distributed in the same sense that say, a mobile network&#39;s users are distributed. While their architecture tends to be designed to scale to millions or billions of nodes in a cluster, other practical limitations (usually network/hardware related) often prevent them getting anywhere near the theoretical limits of the architecture/algorithms.
 
 ### True cost of gossip
 
@@ -391,7 +470,7 @@ Gossip algorithms are typically described in terms of the number of network hops
  
 ### The latency problem 
 
-Firstly, let's define some terms that may be used to discuss the properties of one gossip protocol.
+Firstly, let&#39;s define some terms that may be used to discuss the properties of one gossip protocol.
 Let:
 
 1. `b` be buffer size of a node, i.e. the number of messages it buffers
@@ -487,7 +566,7 @@ Only a tiny 2MB is needed.
 
 ### Independent and responsible nodes
 
-With MPG, contrary to other gossip protocols, every node is responsible for itself and letting others know of it's existence and state. Only when a node appears to have failed/disappeared will any other node attempt to contact it. Under normal operation each node must push their state and any information they wish to share to the rest of the world.
+With MPG, contrary to other gossip protocols, every node is responsible for itself and letting others know of it&#39;s existence and state. Only when a node appears to have failed/disappeared will any other node attempt to contact it. Under normal operation each node must push their state and any information they wish to share to the rest of the world.
 
 ## Common/Defined operations
 
@@ -496,12 +575,12 @@ Gossip protocols are used for a varient of reasons, below categorizes how MPG is
 ### Membership
 Each node normally has at least one seed node, unless it is the first node in the cluster. It communicates with the seed nodes to obtain information about the rest of the cluster. Membership operations include:
 
-* world - Request the node being sent the message sends back it's view of the cluster
-* world-hash - Request the node being sent the message sends back a merkle tree representing it's view of the cluster
+* world - Request the node being sent the message sends back it&#39;s view of the cluster
+* world-hash - Request the node being sent the message sends back a merkle tree representing it&#39;s view of the cluster
 * join - Tell a set of nodes that it is joining
 * leave - Gracefully leave the cluster by telling other nodes
-* ping - Pings a set of nodes to let them know it's still alive
-* pong - The response to a ping acknowledging a node's existence
+* ping - Pings a set of nodes to let them know it&#39;s still alive
+* pong - The response to a ping acknowledging a node&#39;s existence
 
 _note_ When a ping-pong interaction occurs, the node that sent the pong no longer needs to send a ping to the node it sent the pong to, both nodes can be confident that they can speak to each other using these two messages.
 
@@ -560,7 +639,7 @@ locally each node stores a mapping of the bit position to the local vertex id
 
 the bit graph is sent to the tesseri node from all nodes when their vertex set changes over a given threshold. the tesseri then has a complete view of the cluster and can do clustering over the entire graph because each edge is now represented by 2 bits.
 
-This means we can use 8GB to represent up to 34359738368 edges (34.35 billion edges) big enough for many scenarios. Trouble with this and any approach which hoard the entire cluster on one machine is it doesn't take advantage of multiple machines to do the processing...but it's an idea that may be useful in another context so putting it down.
+This means we can use 8GB to represent up to 34359738368 edges (34.35 billion edges) big enough for many scenarios. Trouble with this and any approach which hoard the entire cluster on one machine is it doesn&#39;t take advantage of multiple machines to do the processing...but it&#39;s an idea that may be useful in another context so putting it down.
 
 ## Look ahead graph traversals
 
@@ -583,7 +662,7 @@ Number of vertices per node must be balanced
 Two phased data organization.
 Upon write, use consistent hashing to place vertex in the cluster.
 
-Have a master node, &quot;Tesseri, i.e. Tesseract's eye&quot; whose sole job is to re-organize edges in the cluster to minimize network hops. 
+Have a master node, &quot;Tesseri, i.e. Tesseract&#39;s eye&quot; whose sole job is to re-organize edges in the cluster to minimize network hops. 
 
 Every edge is known to this node. With  available computing a 256GB machine is only $899 with hardware raided 1TB SSD and $679 with spindle disks from http://iweb.com/dedicated-server - there may be cheaper options.
 
@@ -595,7 +674,7 @@ The Tesseract DB must have no single point of failure. As such the any node in t
 
 Only the current Tesseri has a copy of all edges in the cluster. If the current Tesseri fails it would have organized the cluster already so the backup Tesseri can aquire a copy of all edges, after a failure occurs. The assumption being that the backup Tesseri would be able aquire a copy of all edges before the graph becomes imbalanced enough to cause severe traversal problems.
 
-While a node is the Tesseri it should be configurable that it is not considered a part of the cluster. So it doesn't take part in traversals and focus only on keeping the graph distribution balanced...alternatively it is worth exploring using the Tesseri as the node that performs all traversals...</content>
+While a node is the Tesseri it should be configurable that it is not considered a part of the cluster. So it doesn&#39;t take part in traversals and focus only on keeping the graph distribution balanced...alternatively it is worth exploring using the Tesseri as the node that performs all traversals...</content>
  </entry>
  
  <entry>
@@ -614,7 +693,7 @@ Different cases may demand a different query mode depending on the amount of pot
 
 ### Immediate/Sync queries
 
-Immediate query mode runs queries where the expected result set can easily fit in memory. When this query mode is used the query's leader disseminates the query, accumulates the result in its entirety before returning everything to the client.
+Immediate query mode runs queries where the expected result set can easily fit in memory. When this query mode is used the query&#39;s leader disseminates the query, accumulates the result in its entirety before returning everything to the client.
 
 ### Deferred/Async queries
 
@@ -622,7 +701,7 @@ Deferred queries can handle a result set of any size. When the other nodes invol
 
 ## Persistent, long lived, real time graph traversals
 
-In real-time situations queries can be left running. Only async queries can support this and as new vertices or edges are added that match a query, they are immediately accumulated and pushed to the client. If the client for a persistent query has disconnected, its data can be disk cached locally on the query's leader node. When the client reconnects the cached results can be delivered.
+In real-time situations queries can be left running. Only async queries can support this and as new vertices or edges are added that match a query, they are immediately accumulated and pushed to the client. If the client for a persistent query has disconnected, its data can be disk cached locally on the query&#39;s leader node. When the client reconnects the cached results can be delivered.
 
 ## Path prediction
 
@@ -632,9 +711,9 @@ Perhaps one approach is to predict vertices every n-hops. Then using the resulti
 The larger n is the more parallel a query is but the probability of an erronous prediction increases. Using this strategy a single query is dynamically broken down into multiple smaller queries accross the cluster.
 [Path prediction algorithms](https://www.google.co.uk/search?q=path+prediction+algorithm&amp;oq=path+predi&amp;aqs=chrome.3.69i57j0l3.3517j0j1&amp;sourceid=chrome&amp;ie=UTF-8)
 
-Maybe use some kind of marker technique to say that if you start from this vertex i you are guaranteed to get to this vertex j. Possibly precomputed marks? Or continuously computed marks so that when a query is run you're not running the prediction algorithm but using it's results from before. If it's continually re-computed as the graph changes then the &quot;predictions&quot; are guaranteed to be accurate at a given time (or at least until something is removed to cause it to become invalid).
+Maybe use some kind of marker technique to say that if you start from this vertex i you are guaranteed to get to this vertex j. Possibly precomputed marks? Or continuously computed marks so that when a query is run you&#39;re not running the prediction algorithm but using it&#39;s results from before. If it&#39;s continually re-computed as the graph changes then the &quot;predictions&quot; are guaranteed to be accurate at a given time (or at least until something is removed to cause it to become invalid).
 When you hop from i to j then all vertices between are included in the result set.
-When those vertices are processed if a query criteria isn't fulfilled then all the sub queries issued prior to the marker that failed the query can be terminated because their results will never be valid. This implies that the vertices from i to j cannot be returned in a result until the previous set of vertices have been verified to be valid for the query. 
+When those vertices are processed if a query criteria isn&#39;t fulfilled then all the sub queries issued prior to the marker that failed the query can be terminated because their results will never be valid. This implies that the vertices from i to j cannot be returned in a result until the previous set of vertices have been verified to be valid for the query. 
 
 This could result in unnecessary computations but significantly reduces the need to communicate a lot....maybe? that may still be affected by vetex placement in the cluster but if |j...i| is big enough the number of network hops required is already reduced anyway because none of the vertices between i and j will perform a network hop...unless the vertices between i and j create a branch which leads to another marker. but perhaps the markers from the prediction algorithm could be created such that none of the vertices between i and j will hit such a branch creating vertex.
 
@@ -669,7 +748,7 @@ Here, a resource management algorithm is proposed which takes a different approc
 
 The resource manager is configured to maintain the top n file descriptors. Using the access windows file descriptors &quot;bubble&quot; to the top. Any open files above n are closed immediately until the next request that demands it. Access windows can be described as:
 
-For every time tick t where a file is accessed its file descriptor earns a +1 rating. For each tick where the file isn't accessed, the file descriptor gets a -1 rating. These ratings are cumulative. A tick is a unit of time which begins from the last time a file descriptor was used (usage includes read and write operations). Every operation creates a new window of time during which if the file is used it gains a rating and after which if it hasn't been used it loses a rating. The following pseudo-code describes how resource access windows works:
+For every time tick t where a file is accessed its file descriptor earns a +1 rating. For each tick where the file isn&#39;t accessed, the file descriptor gets a -1 rating. These ratings are cumulative. A tick is a unit of time which begins from the last time a file descriptor was used (usage includes read and write operations). Every operation creates a new window of time during which if the file is used it gains a rating and after which if it hasn&#39;t been used it loses a rating. The following pseudo-code describes how resource access windows works:
 
 {% highlight bash %}
 t = 10s # how big is a tick?
@@ -714,21 +793,21 @@ destroy(f)
 	f.close				
 {%endhighlight%}
 
-Given the max number of file descriptors, n to manage; the time unit considered to be 1 tick, t; the threshold at which a file is considered &quot;not hot enough&quot; to be managed, h and a priority queue which ranks it's items using the ratings value, the algorithm proceeds as such. 
+Given the max number of file descriptors, n to manage; the time unit considered to be 1 tick, t; the threshold at which a file is considered &quot;not hot enough&quot; to be managed, h and a priority queue which ranks it&#39;s items using the ratings value, the algorithm proceeds as such. 
 
 When a file is opened, If the file is in the priority queue it is returned and ticked, otherwise the file is opened.
 
-Once opened, if the priority queue's size is at least n, file descriptors starting with the lowest rated are removed from the queue and destroyed. The new file descriptor is then added, ticked and returned.
+Once opened, if the priority queue&#39;s size is at least n, file descriptors starting with the lowest rated are removed from the queue and destroyed. The new file descriptor is then added, ticked and returned.
 
 Each file operation open, read and write results in a tick. 
 A tick checks if a file descriptor has been scheduled for a rating. If it has, the schedule is cancelled. The file descriptor then receives a +1 rating and is marked as scheduled.
-The scheduling occurs as a background task and after a time tick, t has passed, the scheduler runs. If a scheduler runs it means there hasn't been a tick early enough to cancel the scheduler, hence the file descriptor receives a -1 rating. The scheduler then proceeds to check if the rating after the -1 results in the file descriptor having a rating equal to or below the allowed threshold. If so, the file descriptor is removed from the queue and destroyed.
+The scheduling occurs as a background task and after a time tick, t has passed, the scheduler runs. If a scheduler runs it means there hasn&#39;t been a tick early enough to cancel the scheduler, hence the file descriptor receives a -1 rating. The scheduler then proceeds to check if the rating after the -1 results in the file descriptor having a rating equal to or below the allowed threshold. If so, the file descriptor is removed from the queue and destroyed.
 
 Two important things happen as a result of this algorithm, if a file is constantly being used, it is kept open, the more the file is used the longer it is kept open as it will take more -1 ticks for it to be destroyed. 
 
-Secondly resource usage remains proportional to system usage, i.e. if for some reason no files are being used by the system, then the resource manager will eventually close all file descriptors automatically when all the files reach the threshold after not being used. This means that even if the process remains running forever, it'll never keep a file descriptor permanently open unless it was being used.
+Secondly resource usage remains proportional to system usage, i.e. if for some reason no files are being used by the system, then the resource manager will eventually close all file descriptors automatically when all the files reach the threshold after not being used. This means that even if the process remains running forever, it&#39;ll never keep a file descriptor permanently open unless it was being used.
 
-_Side note:_ If a priority queue's implementation doesn't support O(1) lookup (i.e. hash based) then the manager can include a hash map which maintains the path =&gt; file descriptor and both the map and queue are updated during addition or removal. Operations are done to the queue first.
+_Side note:_ If a priority queue&#39;s implementation doesn&#39;t support O(1) lookup (i.e. hash based) then the manager can include a hash map which maintains the path =&gt; file descriptor and both the map and queue are updated during addition or removal. Operations are done to the queue first.
 
 ## Guaranteed data access prediction
 
@@ -757,7 +836,7 @@ _Side note:_ If a priority queue's implementation doesn't support O(1) lookup (i
 * Haskell FFI, working with C libraries (see above)
 * Imutability, a beautiful future
 * Introduction to the fundamentals of graph theory
-* Log structured merge trees for the rest of us (and why it doesn't work for graphs)
+* Log structured merge trees for the rest of us (and why it doesn&#39;t work for graphs)
 * Voltage Cluster (Finding communities in linear time: a physics approach)
 * Markov cluster (http://micans.org/mcl/) Thesis =&gt; http://micans.org/mcl/index.html?sec_thesisetc
 * Network modularity - http://en.wikipedia.org/wiki/Modularity_(networks)
@@ -784,7 +863,7 @@ This is a collection of resources with ideas of how to use graphs or graph algor
 
 [DIMACS challenge data](http://www.dis.uniroma1.it/challenge9/download.shtml#benchmark)
 
-[Stanford's GraphBase __Knuth__](http://www-cs-staff.stanford.edu/~knuth/sgb.html)
+[Stanford&#39;s GraphBase __Knuth__](http://www-cs-staff.stanford.edu/~knuth/sgb.html)
 
 [Nauty and traces - new site](http://pallini.di.uniroma1.it/)
 [Nauty and Traces - generate graphs, old site](http://cs.anu.edu.au/~bdm/nauty/)
@@ -802,7 +881,7 @@ This is a collection of resources with ideas of how to use graphs or graph algor
 [Washington state graph dataset](http://www.eecs.wsu.edu/mgd/gdb.html)
 
 [GraphChi technique](http://graphlab.org/graphchi/)
-[GraphLab's DataSet](http://graphlab.org/downloads/datasets/)
+[GraphLab&#39;s DataSet](http://graphlab.org/downloads/datasets/)
 
 [Networks, Crowds and Markets, reasoning about a highly connected world](http://www.cs.cornell.edu/home/kleinber/networks-book/)
 
@@ -831,12 +910,12 @@ On the premise that minimizing or removing network hops is an absolutely require
 
 The problem with bringing all data on a cluster on to a single node is it defeats the purpose of having a cluster in the first place. However, observe that in order to perform a query only the edges are required.
 
-Every edge that's created is sent to each replica node in the cluster.
+Every edge that&#39;s created is sent to each replica node in the cluster.
 The SVC stores the edge information (from and to vertices).
 
 OR
 
-Using consistent hashing a vertex goes to it's node and replicas
+Using consistent hashing a vertex goes to it&#39;s node and replicas
 When an edge is added the edge is stored on both nodes the edge points to.
 Starting a query from any node, consistent hashing determines which node becomes leader the same way the decision would be made of where to place the vertex.
 When a query is run the leader will have a copy of all the edges needed to complete the query, without making any network requests.
@@ -981,20 +1060,20 @@ Starting from 1, which belongs to node A
 
 # Introduction
 
-There are cases where terms overlap in definition, where context changes everything. I'll do my best to be consistent and follow the terms I set on this page, if in doubt a term is used with the intended definition being what it is on this page.
+There are cases where terms overlap in definition, where context changes everything. I&#39;ll do my best to be consistent and follow the terms I set on this page, if in doubt a term is used with the intended definition being what it is on this page.
 
 ## Graph terms 
 
 1. Vertex - A vertex is effectively a unit within a graph.
 2. Edge - An edge connects to verticies and can be defined as e = (A1,B1)
 3. A graph G is made up of a set of verticies and edges, G = (V,E)
-4. An undirected graph is one where no distinction is made between an edge's two verticies.
-5. A directed graph is one where each edge determines it's direction, i.e. e= (A1,B1) is interpretted as A1 points to B1.
+4. An undirected graph is one where no distinction is made between an edge&#39;s two verticies.
+5. A directed graph is one where each edge determines it&#39;s direction, i.e. e= (A1,B1) is interpretted as A1 points to B1.
 6. A mixed graph is on which contains both directed and undirected edges.
 7. The order of a graph is the number of verticies |V|
 8. The size of a graph is the number of edges |E|
 9. The degree of a vertex is the number of edges that connect to it
-10. A loop is an edge whose two vertices are the same i.e. loop  e = (A1,A1), a loop is counted twice when determining a vertex's degree.
+10. A loop is an edge whose two vertices are the same i.e. loop  e = (A1,A1), a loop is counted twice when determining a vertex&#39;s degree.
 11. In-degree of a vertex is the number of edges connecting to it in a directed graph
 12. Out-degree of a vertex is the number of edges leaving a vertex in a directed graph.
 13. Two edges are said to be adjacent if they share a common vertex
@@ -1002,7 +1081,12 @@ There are cases where terms overlap in definition, where context changes everyth
 
 ## Other terms
 
-1. Node - A node is</content>
+1. Node - A node is an instance of an application running on a server.
+2. Server - A server is an environment capable of executing an instance of an application (i.e. both virtualized and dedicated environments are considered to be servers).
+3. * _Concurrency_ the ability of one or more tasks to be scheduled such that each task appears to progress at an almost equal pace as other tasks.
+
+4. * _Parallelism_ is the ability of a system to take a number of tasks and execute them all at the same time so that progress is not just apparent but actually occurs.
+</content>
  </entry>
  
  <entry>
@@ -1014,7 +1098,7 @@ There are cases where terms overlap in definition, where context changes everyth
 
 # Abstract - Introduction
 
-The Tesseract Graph Query Language (TGQ) is inspired by SQL{% cite coddsql %}, not in syntax but by purpose. SQL allows querying, creating, updating and deleting (CRUD) of data in a relational database {% cite coddrelational %}. TGQ serves the same purpose. While it is written for The Tesseract's [query model](/query-model.html) in particular, it is general enough to apply to other graph storage systems.
+The Tesseract Graph Query Language (TGQ) is inspired by SQL{% cite coddsql %}, not in syntax but by purpose. SQL allows querying, creating, updating and deleting (CRUD) of data in a relational database {% cite coddrelational %}. TGQ serves the same purpose. While it is written for The Tesseract&#39;s [query model](/query-model.html) in particular, it is general enough to apply to other graph storage systems.
 
 ## References
 
@@ -1030,7 +1114,7 @@ The Tesseract Graph Query Language (TGQ) is inspired by SQL{% cite coddsql %}, n
 
 # Abstract - Introduction
 
-Here I propose &quot;Vertex Drift&quot; a dynamic partitioning algorithm suited to the [query model](/query-model.html) being used in the Tesseract. Most current dynamic graph partition algorithms are focused on inter processor communication and data migration, i.e. on a single node. {% cite walshaw1997parallel %} for example introduces the relative gain optimization technique. This and other algorithms require some amount of data migration or are iterative techniques. Vertex drift requires neither iteration or data migration and instead of working with multiple processors it is focused on working with multiple machines. It borrows ideas from Dynamo's virtual nodes {% cite dynamo %} to create a technique where by a vertex or some of it's data splits, and pieces &quot;drift&quot; around the cluster. The Tesseract query model where &quot;markers&quot; and path prediction are used, means that when a vertex is drifted around the cluster we know a lot about a vertex in advance. Using the vertex drift algorithm, only {%m%}O(2n){%em%} messages are required for a traversal (in the worse case) which involves the vertex, where  {%m%}n{%em%} is the number of nodes in the cluster. Only  {%m%}O(n){%em%} messages are required in the best case.
+Here I propose &quot;Vertex Drift&quot; a dynamic partitioning algorithm suited to the [query model](/query-model.html) being used in the Tesseract. Most current dynamic graph partition algorithms are focused on inter processor communication and data migration, i.e. on a single node. {% cite walshaw1997parallel %} for example introduces the relative gain optimization technique. This and other algorithms require some amount of data migration or are iterative techniques. Vertex drift requires neither iteration or data migration and instead of working with multiple processors it is focused on working with multiple machines. It borrows ideas from Dynamo&#39;s virtual nodes {% cite dynamo %} to create a technique where by a vertex or some of it&#39;s data splits, and pieces &quot;drift&quot; around the cluster. The Tesseract query model where &quot;markers&quot; and path prediction are used, means that when a vertex is drifted around the cluster we know a lot about a vertex in advance. Using the vertex drift algorithm, only {%m%}O(2n){%em%} messages are required for a traversal (in the worse case) which involves the vertex, where  {%m%}n{%em%} is the number of nodes in the cluster. Only  {%m%}O(n){%em%} messages are required in the best case.
 
 # Background - Why is this needed?
 
@@ -1041,7 +1125,7 @@ As an example, consider the social graph for some Twitter users with 40+ million
 ![Number of Justin Bieber followers](/assets/bieber-graph.png &quot;Number of Justin Bieber followers&quot;)
 ![Number of Katy Perry followers](/assets/perry-graph.png &quot;Number of Kety Perry followers&quot;)
 ![Number of Lady Gaga followers](/assets/gaga-graph.png &quot;Number of Lady Gaga followers&quot;)
-![Number of Courtney Robinson's followers](/assets/zcourts-graph.png &quot;Number of Courtney Robinson's followers&quot;)
+![Number of Courtney Robinson&#39;s followers](/assets/zcourts-graph.png &quot;Number of Courtney Robinson&#39;s followers&quot;)
 
 These images form a clear demonstration of how ill proportioned a real world graph can be. The question now becomes, how can the relationship of each of these disproportionate vertices be stored such that, traversal is evenly spread across the cluster. One answer is vertex drift, by splitting up the number of in and out edges across multiple machines with this technique a traversal involving this vertex can run against in or outbound edges in parallel across the entire cluster.
 
