@@ -5,8 +5,8 @@
         <description>Research by Courtney Robinson - Courtney Robinson</description>
         <link>http://research.zcourts.com</link>
         <link>http://research.zcourts.com</link>
-        <lastBuildDate>2014-01-17T01:57:07+00:00</lastBuildDate>
-        <pubDate>2014-01-17T01:57:07+00:00</pubDate>
+        <lastBuildDate>2014-01-17T01:59:18+00:00</lastBuildDate>
+        <pubDate>2014-01-17T01:59:18+00:00</pubDate>
         <ttl>1800</ttl>
 
 
@@ -175,7 +175,7 @@ Check out the other crap I&#39;ve been doing for my research though...I&#39;m su
  &lt;title&gt;Research by Courtney Robinson&lt;/title&gt;
  &lt;link href=&quot;http://research.zcourts.com/&quot; rel=&quot;self&quot;/&gt;
  &lt;link href=&quot;http://research.zcourts.com&quot;/&gt;
- &lt;updated&gt;2014-01-17T01:57:07+00:00&lt;/updated&gt;
+ &lt;updated&gt;2014-01-17T01:59:18+00:00&lt;/updated&gt;
  &lt;id&gt;http://research.zcourts.com&lt;/id&gt;
  &lt;author&gt;
    &lt;name&gt;Courtney Robinson&lt;/name&gt;
@@ -1260,9 +1260,9 @@ There are cases where terms overlap in definition, where context changes everyth
 
 1. Node - A node is an instance of an application running on a server.
 2. Server - A server is an environment capable of executing an instance of an application (i.e. both virtualized and dedicated environments are considered to be servers).
-3. * _Concurrency_ the ability of one or more tasks to be scheduled such that each task appears to progress at an almost equal pace as other tasks.
+3. _Concurrency_ the ability of one or more tasks to be scheduled such that each task appears to progress at an almost equal pace as other tasks.
 
-4. * _Parallelism_ is the ability of a system to take a number of tasks and execute them all at the same time so that progress is not just apparent but actually occurs.
+4. _Parallelism_ is the ability of a system to take a number of tasks and execute them all at the same time so that progress is not just apparent but actually occurs.
 &lt;/content&gt;
  &lt;/entry&gt;
  
@@ -2625,9 +2625,9 @@ There are cases where terms overlap in definition, where context changes everyth
 
 1. Node - A node is an instance of an application running on a server.
 2. Server - A server is an environment capable of executing an instance of an application (i.e. both virtualized and dedicated environments are considered to be servers).
-3. * _Concurrency_ the ability of one or more tasks to be scheduled such that each task appears to progress at an almost equal pace as other tasks.
+3. _Concurrency_ the ability of one or more tasks to be scheduled such that each task appears to progress at an almost equal pace as other tasks.
 
-4. * _Parallelism_ is the ability of a system to take a number of tasks and execute them all at the same time so that progress is not just apparent but actually occurs.
+4. _Parallelism_ is the ability of a system to take a number of tasks and execute them all at the same time so that progress is not just apparent but actually occurs.
 </description>
                 <link>http://research.zcourts.com/terminology.html</link>
                 <guid>http://research.zcourts.com</guid>
